@@ -1,0 +1,31 @@
+{
+  "name": "sonolus-pack",
+  "version": "0.1.0",
+  "description": "CLI tool to pack Sonolus source files into repository and database",
+  "author": "NonSpicyBurrito",
+  "repository": "github:NonSpicyBurrito/sonolus-pack",
+  "license": "MIT",
+  "keywords": [
+    "Sonolus"
+  ],
+  "bin": "dist/index.js",
+  "scripts": {
+    "build": "node ./build/prepare.js && tsc -p .",
+    "lint": "eslint --ext .ts src/"
+  },
+  "devDependencies": {
+    "@types/fs-extra": "^9.0.11",
+    "@typescript-eslint/eslint-plugin": "^4.27.0",
+    "@typescript-eslint/parser": "^4.27.0",
+    "eslint": "^7.28.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-prettier": "^3.4.0",
+    "prettier": "^2.3.1",
+    "typescript": "^4.3.4"
+  },
+  "dependencies": {
+    "ajv": "^8.6.0",
+    "commander": "^7.2.0",
+    "fs-extra": "^10.0.0"
+  }
+}
