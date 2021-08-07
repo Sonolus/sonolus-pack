@@ -12,7 +12,7 @@ import { processInfos, processResource } from './process'
 
 const options = new Command()
     .name('sonolus-pack')
-    .version('0.1.0')
+    .version('0.2.0-beta.0')
     .option('-i, --input <value>', 'input directory', 'source')
     .option('-o, --output <value>', 'output directory', 'pack')
     .parse()
