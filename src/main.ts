@@ -58,6 +58,11 @@ try {
             { name: 'thumbnail', type: 'BackgroundThumbnail', ext: 'png' },
             { name: 'data', type: 'BackgroundData', ext: 'json' },
             { name: 'image', type: 'BackgroundImage', ext: 'png' },
+            {
+                name: 'configuration',
+                type: 'BackgroundConfiguration',
+                ext: 'json',
+            },
         ]
     )
 
