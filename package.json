@@ -9,6 +9,9 @@
     "Sonolus"
   ],
   "bin": "dist/index.js",
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "node ./build/prepare.js && tsc -p .",
     "lint": "eslint --ext .ts src/"
