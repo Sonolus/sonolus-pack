@@ -1,5 +1,3 @@
-import { JTDParser } from 'ajv/dist/jtd'
-import { createHash } from 'crypto'
 import {
     existsSync,
     outputFileSync,
@@ -7,114 +5,105 @@ import {
     readFileSync,
     readJsonSync,
 } from 'fs-extra'
-import { gzipSync } from 'zlib'
-import { WithName } from './jtd/db'
-import { getSRLParser, ResourceType, SRL } from './jtd/srl'
+import { compressSync, hash, ResourceType, SRL } from 'sonolus-core'
+import { Parser } from './schemas/parser'
+import { getSRLParser } from './schemas/srl'
+
+type JsonProcessor = (json: unknown, path: string) => unknown
 
 type Resource = {
-    name: string
     type: ResourceType
-    filename?: string
     ext: string
-    jsonProcessor?: (json: unknown, path: string) => unknown
+    jsonProcessor?: JsonProcessor
 }
 
 export function processInfos<T>(
     pathInput: string,
     pathOutput: string,
     dirname: string,
-    infos: WithName<T>[],
-    infoParser: JTDParser<T>,
-    resources: Resource[]
-): void {
+    infos: (T & { name: string })[],
+    infoParser: Parser<T>,
+    resources: Record<string, Resource>
+) {
     const pathDir = `${pathInput}/${dirname}`
 
-    if (existsSync(pathDir)) {
-        readdirSync(pathDir, { withFileTypes: true })
-            .filter((dirent) => dirent.isDirectory())
-            .forEach(({ name }) => {
-                const path = `${pathDir}/${name}`
-                console.log('[INFO]', 'Packing:', path)
+    if (!existsSync(pathDir)) return
 
-                if (!existsSync(`${path}/info.json`)) {
-                    throw `${path}/info.json: does not exist`
-                }
+    readdirSync(pathDir, { withFileTypes: true })
+        .filter((dirent) => dirent.isDirectory())
+        .forEach(({ name }) => {
+            const path = `${pathDir}/${name}`
+            console.log('[INFO]', 'Packing:', path)
 
-                const info = infoParser(
-                    readFileSync(`${path}/info.json`, 'utf-8')
-                )
-                if (!info) {
-                    throw `${path}/info.json(${infoParser.position}): ${infoParser.message}`
-                }
+            if (!existsSync(`${path}/info.json`))
+                throw `${path}/info.json: does not exist`
 
-                resources.forEach((resource) =>
-                    processResource(pathOutput, path, info, resource)
-                )
+            const info = infoParser(
+                readJsonSync(`${path}/info.json`),
+                `${path}/info.json`
+            )
 
-                infos.push({ name, ...info })
-            })
-    }
+            const output = {}
+            Object.entries(resources).forEach(
+                ([name, { type, ext, jsonProcessor }]) =>
+                    Object.assign(output, {
+                        [name]: processResource(
+                            `${path}/${name}`,
+                            pathOutput,
+                            type,
+                            ext,
+                            jsonProcessor
+                        ),
+                    })
+            )
+
+            infos.push({ name, ...info, ...output })
+        })
 }
 
 export function processResource(
+    pathFile: string,
     pathOutput: string,
-    path: string,
-    info: unknown,
-    { name, type, filename, ext, jsonProcessor }: Resource
-): void {
-    filename = filename || name
-    jsonProcessor = jsonProcessor || ((json) => json)
-
+    type: ResourceType,
+    ext: string,
+    jsonProcessor: JsonProcessor = (json) => json
+) {
     let output: { buffer: Buffer } | { srl: SRL<typeof type> }
 
-    if (existsSync(`${path}/${filename}.srl`)) {
+    const pathFileSRL = `${pathFile}.srl`
+    const pathFileExt = `${pathFile}.${ext}`
+
+    if (existsSync(pathFileSRL)) {
         const srlParser = getSRLParser(type)
-        const srl = srlParser(readFileSync(`${path}/${filename}.srl`, 'utf-8'))
-        if (!srl) {
-            throw `${path}/${filename}.srl(${srlParser.position}): ${srlParser.message}`
-        }
-        output = { srl }
-    } else if (existsSync(`${path}/${filename}`)) {
-        output = { buffer: readFileSync(`${path}/${filename}`) }
-    } else if (existsSync(`${path}/${filename}.${ext}`)) {
+        output = { srl: srlParser(readJsonSync(pathFileSRL), pathFileSRL) }
+    } else if (existsSync(`${pathFile}`)) {
+        output = { buffer: readFileSync(`${pathFile}`) }
+    } else if (existsSync(pathFileExt)) {
         if (ext === 'json') {
-            const json = readJsonSync(`${path}/${filename}.json`)
-            output = {
-                buffer: gzipSync(JSON.stringify(jsonProcessor(json, path)), {
-                    level: 9,
-                }),
-            }
+            const json = readJsonSync(pathFileExt)
+            output = { buffer: compressSync(jsonProcessor(json, pathFile)) }
         } else {
-            output = { buffer: readFileSync(`${path}/${filename}.${ext}`) }
+            output = { buffer: readFileSync(pathFileExt) }
         }
     } else {
-        console.log(
-            '[WARNING]',
-            `${path}/${filename}[.${ext}/.srl]: does not exist`
-        )
-        output = {
-            srl: {
-                type,
-                hash: '',
-                url: '',
-            },
-        }
+        console.log('[WARNING]', `${pathFile}[.${ext}/.srl]: does not exist`)
+        output = { srl: { type, hash: '', url: '' } }
     }
 
     if ('buffer' in output) {
-        const hash = createHash('sha1').update(output.buffer).digest('hex')
+        const outputHash = hash(output.buffer)
         outputFileSync(
-            `${pathOutput}/repository/${type}/${hash}`,
+            `${pathOutput}/repository/${type}/${outputHash}`,
             output.buffer
         )
         output = {
             srl: {
                 type,
-                hash,
-                url: `/repository/${type}/${hash}`,
+                hash: outputHash,
+                url: `/repository/${type}/${outputHash}`,
             },
         }
     }
 
-    Object.assign(info, { [name]: output.srl })
+    return output.srl
 }

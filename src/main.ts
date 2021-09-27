@@ -1,14 +1,14 @@
 import { Command } from 'commander'
 import { emptyDirSync, outputJsonSync, removeSync } from 'fs-extra'
-import { backgroundInfoParser } from './jtd/background-info'
-import { DB, WithName } from './jtd/db'
-import { effectDataValidator } from './jtd/effect-data'
-import { effectInfoParser } from './jtd/effect-info'
-import { engineInfoParser } from './jtd/engine-info'
-import { levelInfoParser } from './jtd/level-info'
-import { particleInfoParser } from './jtd/particle-info'
-import { skinInfoParser } from './jtd/skin-info'
+import { Database } from 'sonolus-core'
 import { processInfos, processResource } from './process'
+import { partialBackgroundInfoParser } from './schemas/background-info'
+import { partialEffectDataParser } from './schemas/effect-data'
+import { partialEffectInfoParser } from './schemas/effect-info'
+import { partialEngineInfoParser } from './schemas/engine-info'
+import { partialLevelInfoParser } from './schemas/level-info'
+import { partialParticleInfoParser } from './schemas/particle-info'
+import { partialSkinInfoParser } from './schemas/skin-info'
 
 const options = new Command()
     .name('sonolus-pack')
@@ -21,7 +21,7 @@ const options = new Command()
 const pathInput = options.input
 const pathOutput = options.output
 
-const db: DB = {
+const db: Database = {
     levels: [],
     skins: [],
     backgrounds: [],
@@ -36,34 +36,47 @@ try {
 
     emptyDirSync(pathOutput)
 
-    processInfos(pathInput, pathOutput, 'levels', db.levels, levelInfoParser, [
-        { name: 'cover', type: 'LevelCover', ext: 'png' },
-        { name: 'bgm', type: 'LevelBgm', ext: 'mp3' },
-        { name: 'data', type: 'LevelData', ext: 'json' },
-    ])
+    processInfos(
+        pathInput,
+        pathOutput,
+        'levels',
+        db.levels,
+        partialLevelInfoParser,
+        {
+            cover: { type: 'LevelCover', ext: 'png' },
+            bgm: { type: 'LevelBgm', ext: 'mp3' },
+            data: { type: 'LevelData', ext: 'json' },
+        }
+    )
 
-    processInfos(pathInput, pathOutput, 'skins', db.skins, skinInfoParser, [
-        { name: 'thumbnail', type: 'SkinThumbnail', ext: 'png' },
-        { name: 'data', type: 'SkinData', ext: 'json' },
-        { name: 'texture', type: 'SkinTexture', ext: 'png' },
-    ])
+    processInfos(
+        pathInput,
+        pathOutput,
+        'skins',
+        db.skins,
+        partialSkinInfoParser,
+        {
+            thumbnail: { type: 'SkinThumbnail', ext: 'png' },
+            data: { type: 'SkinData', ext: 'json' },
+            texture: { type: 'SkinTexture', ext: 'png' },
+        }
+    )
 
     processInfos(
         pathInput,
         pathOutput,
         'backgrounds',
         db.backgrounds,
-        backgroundInfoParser,
-        [
-            { name: 'thumbnail', type: 'BackgroundThumbnail', ext: 'png' },
-            { name: 'data', type: 'BackgroundData', ext: 'json' },
-            { name: 'image', type: 'BackgroundImage', ext: 'png' },
-            {
-                name: 'configuration',
+        partialBackgroundInfoParser,
+        {
+            thumbnail: { type: 'BackgroundThumbnail', ext: 'png' },
+            data: { type: 'BackgroundData', ext: 'json' },
+            image: { type: 'BackgroundImage', ext: 'png' },
+            configuration: {
                 type: 'BackgroundConfiguration',
                 ext: 'json',
             },
-        ]
+        }
     )
 
     processInfos(
@@ -71,36 +84,29 @@ try {
         pathOutput,
         'effects',
         db.effects,
-        effectInfoParser,
-        [
-            { name: 'thumbnail', type: 'EffectThumbnail', ext: 'png' },
-            {
-                name: 'data',
+        partialEffectInfoParser,
+        {
+            thumbnail: { type: 'EffectThumbnail', ext: 'png' },
+            data: {
                 type: 'EffectData',
                 ext: 'json',
                 jsonProcessor(json, path) {
-                    if (effectDataValidator(json)) {
-                        json.clips.forEach((clip) => {
-                            processResource(pathOutput, path, clip, {
-                                name: 'clip',
-                                type: 'EffectClip',
-                                filename: clip.name,
-                                ext: 'mp3',
-                            })
-                            Object.assign(clip, { name: undefined })
-                        })
-                        return json
-                    } else {
-                        throw `${path}/data.json: ${effectDataValidator.errors
-                            ?.map(
-                                (error) =>
-                                    `${error.instancePath} ${error.message}`
-                            )
-                            .join('; ')}`
+                    const data = partialEffectDataParser(json, path)
+                    const pathDir = path.slice(0, -4)
+                    return {
+                        clips: data.clips.map((clip) => ({
+                            id: clip.id,
+                            clip: processResource(
+                                `${pathDir}/${clip.clip}`,
+                                pathOutput,
+                                'EffectClip',
+                                'mp3'
+                            ),
+                        })),
                     }
                 },
             },
-        ]
+        }
     )
 
     processInfos(
@@ -108,12 +114,12 @@ try {
         pathOutput,
         'particles',
         db.particles,
-        particleInfoParser,
-        [
-            { name: 'thumbnail', type: 'ParticleThumbnail', ext: 'png' },
-            { name: 'data', type: 'ParticleData', ext: 'json' },
-            { name: 'texture', type: 'ParticleTexture', ext: 'png' },
-        ]
+        partialParticleInfoParser,
+        {
+            thumbnail: { type: 'ParticleThumbnail', ext: 'png' },
+            data: { type: 'ParticleData', ext: 'json' },
+            texture: { type: 'ParticleTexture', ext: 'png' },
+        }
     )
 
     processInfos(
@@ -121,43 +127,54 @@ try {
         pathOutput,
         'engines',
         db.engines,
-        engineInfoParser,
-        [
-            { name: 'thumbnail', type: 'EngineThumbnail', ext: 'png' },
-            { name: 'data', type: 'EngineData', ext: 'json' },
-            { name: 'configuration', type: 'EngineConfiguration', ext: 'json' },
-        ]
+        partialEngineInfoParser,
+        {
+            thumbnail: { type: 'EngineThumbnail', ext: 'png' },
+            data: { type: 'EngineData', ext: 'json' },
+            configuration: { type: 'EngineConfiguration', ext: 'json' },
+        }
     )
 
     db.levels.forEach((level) => {
-        checkExists(db.engines, level.engine, `Level/${level.name}`)
+        const parent = `Level/${level.name}`
+
+        checkExists(db.engines, level.engine, parent, '.engine')
         if (level.useSkin.item) {
-            checkExists(db.skins, level.useSkin.item, `Level/${level.name}`)
+            checkExists(db.skins, level.useSkin.item, parent, '.useSkin.item')
         }
         if (level.useBackground.item) {
             checkExists(
                 db.backgrounds,
                 level.useBackground.item,
-                `Level/${level.name}`
+                parent,
+                '.useBackground.item'
             )
         }
         if (level.useEffect.item) {
-            checkExists(db.effects, level.useEffect.item, `Level/${level.name}`)
+            checkExists(
+                db.effects,
+                level.useEffect.item,
+                parent,
+                '.useEffect.item'
+            )
         }
         if (level.useParticle.item) {
             checkExists(
                 db.particles,
                 level.useParticle.item,
-                `Level/${level.name}`
+                parent,
+                '.useParticle.item'
             )
         }
     })
 
     db.engines.forEach((engine) => {
-        checkExists(db.skins, engine.skin, `Engine/${engine.name}`)
-        checkExists(db.backgrounds, engine.background, `Engine/${engine.name}`)
-        checkExists(db.effects, engine.effect, `Engine/${engine.name}`)
-        checkExists(db.particles, engine.particle, `Engine/${engine.name}`)
+        const parent = `Engine/${engine.name}`
+
+        checkExists(db.skins, engine.skin, parent, '.skin')
+        checkExists(db.backgrounds, engine.background, parent, '.background')
+        checkExists(db.effects, engine.effect, parent, '.effect')
+        checkExists(db.particles, engine.particle, parent, '.particle')
     })
 
     outputJsonSync(`${pathOutput}/db.json`, db)
@@ -171,8 +188,13 @@ try {
     removeSync(pathOutput)
 }
 
-function checkExists<T>(infos: WithName<T>[], name: string, parent: string) {
+function checkExists(
+    infos: { name: string }[],
+    name: string,
+    parent: string,
+    path: string
+) {
     if (!infos.find((info) => info.name === name)) {
-        throw `${parent}: ${name} not found`
+        throw `${parent}: ${name} not found (${path})`
     }
 }
