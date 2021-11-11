@@ -5,9 +5,9 @@ CLI tool to pack Sonolus source files into repository and database.
 ## Links
 
 -   [Sonolus Website](https://sonolus.com)
--   [Sonolus Wiki](https://github.com/NonSpicyBurrito/sonolus-wiki)
--   [sonolus-express](https://github.com/NonSpicyBurrito/sonolus-express)
--   [sonolus-generate-static](https://github.com/NonSpicyBurrito/sonolus-generate-static)
+-   [Sonolus Wiki](https://wiki.sonolus.com)
+-   [sonolus-express](https://github.com/Sonolus/sonolus-express)
+-   [sonolus-generate-static](https://github.com/Sonolus/sonolus-generate-static)
 
 ## Usage
 
@@ -346,4 +346,4 @@ Output contains:
 -   `/repository` contains processed resources.
 -   `/db.json` contains information of items.
 
-Output can be used by [sonolus-express](https://github.com/NonSpicyBurrito/sonolus-express) and [sonolus-generate-static](https://github.com/NonSpicyBurrito/sonolus-generate-static) to develop Sonolus servers.
+Output can be used by [sonolus-express](https://github.com/Sonolus/sonolus-express) and [sonolus-generate-static](https://github.com/Sonolus/sonolus-generate-static) to develop Sonolus servers.

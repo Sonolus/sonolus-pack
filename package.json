@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "CLI tool to pack Sonolus source files into repository and database",
   "author": "NonSpicyBurrito",
-  "repository": "github:NonSpicyBurrito/sonolus-pack",
+  "repository": "github:Sonolus/sonolus-pack",
   "license": "MIT",
   "keywords": [
     "Sonolus"
