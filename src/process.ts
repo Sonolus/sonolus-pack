@@ -14,6 +14,7 @@ type JsonProcessor = (json: unknown, path: string) => unknown
 type Resource = {
     type: ResourceType
     ext: string
+    optional?: boolean
     jsonProcessor?: JsonProcessor
 }
 
@@ -45,13 +46,14 @@ export function processInfos<T>(
 
             const output = {}
             Object.entries(resources).forEach(
-                ([name, { type, ext, jsonProcessor }]) =>
+                ([name, { type, ext, optional, jsonProcessor }]) =>
                     Object.assign(output, {
                         [name]: processResource(
                             `${path}/${name}`,
                             pathOutput,
                             type,
                             ext,
+                            optional,
                             jsonProcessor
                         ),
                     })
@@ -66,6 +68,7 @@ export function processResource(
     pathOutput: string,
     type: ResourceType,
     ext: string,
+    optional = false,
     jsonProcessor: JsonProcessor = (json) => json
 ) {
     let output: { buffer: Buffer } | { srl: SRL<typeof type> }
@@ -85,6 +88,12 @@ export function processResource(
         } else {
             output = { buffer: readFileSync(pathFileExt) }
         }
+    } else if (optional) {
+        console.log(
+            '[INFO]',
+            `${pathFile}[.${ext}/.srl]: does not exist, skipped`
+        )
+        return
     } else {
         console.log('[WARNING]', `${pathFile}[.${ext}/.srl]: does not exist`)
         output = { srl: { type, hash: '', url: '' } }

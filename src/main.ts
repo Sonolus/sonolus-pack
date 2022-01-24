@@ -45,6 +45,7 @@ try {
         {
             cover: { type: 'LevelCover', ext: 'png' },
             bgm: { type: 'LevelBgm', ext: 'mp3' },
+            preview: { type: 'LevelPreview', ext: 'mp3', optional: true },
             data: { type: 'LevelData', ext: 'json' },
         }
     )
