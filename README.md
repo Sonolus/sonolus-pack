@@ -86,6 +86,7 @@ For example:
 |           info.json
 |           cover[.png/.srl]
 |           bgm[.mp3/.srl]
+|           preview[.mp3/.srl]
 |           data[.json/.srl]
 |
 +---skins
@@ -173,6 +174,10 @@ Level cover.
 #### `bgm[.mp3/.srl]`
 
 Level bgm.
+
+#### `preview[.mp3/.srl]`
+
+Optional, level preview.
 
 #### `data[.json/.srl]`
 
