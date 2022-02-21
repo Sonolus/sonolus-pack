@@ -132,6 +132,7 @@ try {
         {
             thumbnail: { type: 'EngineThumbnail', ext: 'png' },
             data: { type: 'EngineData', ext: 'json' },
+            rom: { type: 'EngineRom', ext: 'bin', optional: true },
             configuration: { type: 'EngineConfiguration', ext: 'json' },
         }
     )

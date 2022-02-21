@@ -6,6 +6,7 @@ import {
     readJsonSync,
 } from 'fs-extra'
 import { compressSync, hash, ResourceType, SRL } from 'sonolus-core'
+import { gzipSync } from 'zlib'
 import { Parser } from './schemas/parser'
 import { getSRLParser } from './schemas/srl'
 
@@ -85,6 +86,10 @@ export function processResource(
         if (ext === 'json') {
             const json = readJsonSync(pathFileExt)
             output = { buffer: compressSync(jsonProcessor(json, pathFile)) }
+        } else if (ext === 'bin') {
+            output = {
+                buffer: gzipSync(readFileSync(pathFileExt), { level: 9 }),
+            }
         } else {
             output = { buffer: readFileSync(pathFileExt) }
         }

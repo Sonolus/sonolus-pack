@@ -134,6 +134,7 @@ For example:
             info.json
             thumbnail[.png/.srl]
             data[.json/.srl]
+            rom[.bin/.srl]
             configuration[.json/.srl]
 ```
 
@@ -339,6 +340,10 @@ Engine thumbnail.
 #### `data[.json/.srl]`
 
 Engine data.
+
+#### `rom[.bin/.srl]`
+
+Optional, engine rom.
 
 #### `configuration[.json/.srl]`
 
