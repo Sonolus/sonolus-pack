@@ -106,6 +106,7 @@ For example:
 |           thumbnail[.png/.srl]
 |           data[.json/.srl]
 |           image[.png/.srl]
+|           configuration[.json/.srl]
 |
 +---effects
 |   +---{effect}
@@ -245,6 +246,10 @@ Background data.
 #### `image[.png/.srl]`
 
 Background image.
+
+#### `configuration[.json/.srl]`
+
+Background configuration.
 
 ### Effects
 
