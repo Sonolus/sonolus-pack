@@ -1,9 +1,8 @@
 import { Command } from 'commander'
 import { emptyDirSync, outputJsonSync, removeSync } from 'fs-extra'
 import { Database } from 'sonolus-core'
-import { processInfos, processResource } from './process'
+import { processInfos } from './process'
 import { partialBackgroundInfoParser } from './schemas/background-info'
-import { partialEffectDataParser } from './schemas/effect-data'
 import { partialEffectInfoParser } from './schemas/effect-info'
 import { partialEngineInfoParser } from './schemas/engine-info'
 import { partialLevelInfoParser } from './schemas/level-info'
@@ -73,10 +72,7 @@ try {
             thumbnail: { type: 'BackgroundThumbnail', ext: 'png' },
             data: { type: 'BackgroundData', ext: 'json' },
             image: { type: 'BackgroundImage', ext: 'png' },
-            configuration: {
-                type: 'BackgroundConfiguration',
-                ext: 'json',
-            },
+            configuration: { type: 'BackgroundConfiguration', ext: 'json' },
         }
     )
 
@@ -88,25 +84,8 @@ try {
         partialEffectInfoParser,
         {
             thumbnail: { type: 'EffectThumbnail', ext: 'png' },
-            data: {
-                type: 'EffectData',
-                ext: 'json',
-                jsonProcessor(json, path) {
-                    const data = partialEffectDataParser(json, path)
-                    const pathDir = path.slice(0, -4)
-                    return {
-                        clips: data.clips.map((clip) => ({
-                            id: clip.id,
-                            clip: processResource(
-                                `${pathDir}/${clip.clip}`,
-                                pathOutput,
-                                'EffectClip',
-                                'mp3'
-                            ),
-                        })),
-                    }
-                },
-            },
+            data: { type: 'EffectData', ext: 'json' },
+            audio: { type: 'EffectAudio', ext: 'zip' },
         }
     )
 
