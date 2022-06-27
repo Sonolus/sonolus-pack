@@ -109,7 +109,7 @@ export function processResource(
             srl: {
                 type,
                 hash: outputHash,
-                url: `/repository/${type}/${outputHash}`,
+                url: `/sonolus/repository/${type}/${outputHash}`,
             },
         }
     }
