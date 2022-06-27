@@ -10,13 +10,10 @@ import { gzipSync } from 'zlib'
 import { Parser } from './schemas/parser'
 import { getSRLParser } from './schemas/srl'
 
-type JsonProcessor = (json: unknown, path: string) => unknown
-
 type Resource = {
     type: ResourceType
     ext: string
     optional?: boolean
-    jsonProcessor?: JsonProcessor
 }
 
 export function processInfos<T>(
@@ -47,15 +44,14 @@ export function processInfos<T>(
 
             const output = {}
             Object.entries(resources).forEach(
-                ([name, { type, ext, optional, jsonProcessor }]) =>
+                ([name, { type, ext, optional }]) =>
                     Object.assign(output, {
                         [name]: processResource(
                             `${path}/${name}`,
                             pathOutput,
                             type,
                             ext,
-                            optional,
-                            jsonProcessor
+                            optional
                         ),
                     })
             )
@@ -69,8 +65,7 @@ export function processResource(
     pathOutput: string,
     type: ResourceType,
     ext: string,
-    optional = false,
-    jsonProcessor: JsonProcessor = (json) => json
+    optional = false
 ) {
     let output: { buffer: Buffer } | { srl: SRL<typeof type> }
 
@@ -85,7 +80,7 @@ export function processResource(
     } else if (existsSync(pathFileExt)) {
         if (ext === 'json') {
             const json = readJsonSync(pathFileExt)
-            output = { buffer: compressSync(jsonProcessor(json, pathFile)) }
+            output = { buffer: compressSync(json) }
         } else if (ext === 'bin') {
             output = {
                 buffer: gzipSync(readFileSync(pathFileExt), { level: 9 }),
