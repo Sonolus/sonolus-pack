@@ -11,7 +11,7 @@ import { partialSkinInfoParser } from './schemas/skin-info'
 
 const options = new Command()
     .name('sonolus-pack')
-    .version('1.2.1')
+    .version('2.0.0')
     .option('-i, --input <value>', 'input directory', 'source')
     .option('-o, --output <value>', 'output directory', 'pack')
     .parse()
