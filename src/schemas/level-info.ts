@@ -2,10 +2,10 @@ import { z } from 'zod'
 import { localizationTextSchema } from './localization-text'
 import { getParser } from './parser'
 
-const useSchema = z.object({
-    useDefault: z.boolean(),
-    item: z.string().optional(),
-})
+const useSchema = z.discriminatedUnion('useDefault', [
+    z.object({ useDefault: z.literal(true) }),
+    z.object({ useDefault: z.literal(false), item: z.string() }),
+])
 
 const partialLevelInfoSchema = z.object({
     version: z.literal(1),
