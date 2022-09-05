@@ -29,7 +29,7 @@
   "dependencies": {
     "commander": "^9.0.0",
     "fs-extra": "^10.0.0",
-    "sonolus-core": "^2.0.0",
-    "zod": "^3.11.6"
+    "sonolus-core": "^4.0.0",
+    "zod": "^3.18.0"
   }
 }

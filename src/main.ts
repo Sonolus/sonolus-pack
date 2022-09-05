@@ -120,10 +120,10 @@ try {
         const parent = `Level/${level.name}`
 
         checkExists(db.engines, level.engine, parent, '.engine')
-        if (level.useSkin.item) {
+        if (!level.useSkin.useDefault) {
             checkExists(db.skins, level.useSkin.item, parent, '.useSkin.item')
         }
-        if (level.useBackground.item) {
+        if (!level.useBackground.useDefault) {
             checkExists(
                 db.backgrounds,
                 level.useBackground.item,
@@ -131,7 +131,7 @@ try {
                 '.useBackground.item'
             )
         }
-        if (level.useEffect.item) {
+        if (!level.useEffect.useDefault) {
             checkExists(
                 db.effects,
                 level.useEffect.item,
@@ -139,7 +139,7 @@ try {
                 '.useEffect.item'
             )
         }
-        if (level.useParticle.item) {
+        if (!level.useParticle.useDefault) {
             checkExists(
                 db.particles,
                 level.useParticle.item,
