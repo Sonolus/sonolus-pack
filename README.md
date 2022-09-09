@@ -79,6 +79,9 @@ For example:
 ### Folder Structure
 
 ```
+|   info.json
+|   banner[.png/.srl]
+|
 +---levels
 |   +---{level}
 |   +---...
@@ -138,6 +141,24 @@ For example:
             rom[.bin/.srl]
             configuration[.json/.srl]
 ```
+
+### Info
+
+Resources of server is located in `/`.
+
+#### `info.json`
+
+Server information.
+
+```ts
+type ServerInfo = {
+    title: LocalizationText
+}
+```
+
+#### `banner[.png/.srl]`
+
+Server banner.
 
 ### Levels
 

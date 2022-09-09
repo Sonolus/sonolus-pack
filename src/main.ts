@@ -1,12 +1,13 @@
 import { Command } from 'commander'
 import { emptyDirSync, outputJsonSync, removeSync } from 'fs-extra'
 import { Database } from 'sonolus-core'
-import { processInfos } from './process'
+import { processInfo, processInfos } from './process'
 import { partialBackgroundInfoParser } from './schemas/background-info'
 import { partialEffectInfoParser } from './schemas/effect-info'
 import { partialEngineInfoParser } from './schemas/engine-info'
 import { partialLevelInfoParser } from './schemas/level-info'
 import { partialParticleInfoParser } from './schemas/particle-info'
+import { partialServerInfoParser } from './schemas/server-info'
 import { partialSkinInfoParser } from './schemas/skin-info'
 
 const options = new Command()
@@ -20,20 +21,28 @@ const options = new Command()
 const pathInput = options.input
 const pathOutput = options.output
 
-const db: Database = {
-    levels: [],
-    skins: [],
-    backgrounds: [],
-    effects: [],
-    particles: [],
-    engines: [],
-}
-
 try {
     console.log('[INFO]', 'Packing:', pathInput)
     console.log()
 
     emptyDirSync(pathOutput)
+
+    const info = processInfo<Database['info']>(
+        pathInput,
+        pathOutput,
+        partialServerInfoParser,
+        { banner: { type: 'ServerBanner', ext: 'png' } }
+    )
+
+    const db: Database = {
+        info,
+        levels: [],
+        skins: [],
+        backgrounds: [],
+        effects: [],
+        particles: [],
+        engines: [],
+    }
 
     processInfos(
         pathInput,
