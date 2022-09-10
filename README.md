@@ -184,10 +184,14 @@ type LevelInfo = {
     meta?: unknown // (optional) user-defined meta information
 }
 
-type Use = {
-    useDefault: boolean
-    item?: string // name of referenced item
-}
+type Use =
+    | {
+          useDefault: true
+      }
+    | {
+          useDefault: false
+          item: string // name of referenced item
+      }
 ```
 
 #### `cover[.png/.srl]`
