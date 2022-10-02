@@ -79,6 +79,9 @@ For example:
 ### Folder Structure
 
 ```
+|   info.json
+|   banner[.png/.srl]
+|
 +---levels
 |   +---{level}
 |   +---...
@@ -139,6 +142,24 @@ For example:
             configuration[.json/.srl]
 ```
 
+### Info
+
+Resources of server is located in `/`.
+
+#### `info.json`
+
+Server information.
+
+```ts
+type ServerInfo = {
+    title: LocalizationText
+}
+```
+
+#### `banner[.png/.srl]`
+
+Server banner.
+
 ### Levels
 
 Resources of each level is located in `/levels/{name}`.
@@ -163,10 +184,14 @@ type LevelInfo = {
     meta?: unknown // (optional) user-defined meta information
 }
 
-type Use = {
-    useDefault: boolean
-    item?: string // name of referenced item
-}
+type Use =
+    | {
+          useDefault: true
+      }
+    | {
+          useDefault: false
+          item: string // name of referenced item
+      }
 ```
 
 #### `cover[.png/.srl]`

@@ -10,19 +10,26 @@ import { gzipSync } from 'zlib'
 import { Parser } from './schemas/parser'
 import { getSRLParser } from './schemas/srl'
 
-type Resource = {
-    type: ResourceType
-    ext: string
-    optional?: boolean
+type ParserFromInfo<T> = Parser<{
+    [key in keyof T as T[key] extends SRL<ResourceType> ? never : key]: T[key]
+}>
+type ResourcesFromInfo<T> = {
+    [key in keyof T as T[key] extends SRL<ResourceType> | undefined
+        ? key
+        : never]-?: T[key] extends SRL<infer U> | undefined
+        ? T[key] extends SRL<ResourceType>
+            ? { type: U; ext: string }
+            : { type: U; ext: string; optional: true }
+        : never
 }
 
 export function processInfos<T>(
     pathInput: string,
     pathOutput: string,
     dirname: string,
-    infos: (T & { name: string })[],
-    infoParser: Parser<T>,
-    resources: Record<string, Resource>
+    infos: T[],
+    infoParser: ParserFromInfo<Omit<T, 'name'>>,
+    resources: ResourcesFromInfo<Omit<T, 'name'>>
 ) {
     const pathDir = `${pathInput}/${dirname}`
 
@@ -30,44 +37,64 @@ export function processInfos<T>(
 
     readdirSync(pathDir, { withFileTypes: true })
         .filter((dirent) => dirent.isDirectory())
-        .forEach(({ name }) => {
-            const path = `${pathDir}/${name}`
-            console.log('[INFO]', 'Packing:', path)
-
-            if (!existsSync(`${path}/info.json`))
-                throw `${path}/info.json: does not exist`
-
-            const info = infoParser(
-                readJsonSync(`${path}/info.json`),
-                `${path}/info.json`
-            )
-
-            const output = {}
-            Object.entries(resources).forEach(
-                ([name, { type, ext, optional }]) =>
-                    Object.assign(output, {
-                        [name]: processResource(
-                            `${path}/${name}`,
-                            pathOutput,
-                            type,
-                            ext,
-                            optional
-                        ),
-                    })
-            )
-
-            infos.push({ name, ...info, ...output })
-        })
+        .forEach(({ name }) =>
+            infos.push({
+                name,
+                ...processInfo(
+                    `${pathDir}/${name}`,
+                    pathOutput,
+                    infoParser,
+                    resources
+                ),
+            } as unknown as T)
+        )
 }
 
-export function processResource(
+export function processInfo<T>(
+    path: string,
+    pathOutput: string,
+    infoParser: ParserFromInfo<T>,
+    resources: ResourcesFromInfo<T>
+) {
+    console.log('[INFO]', 'Packing:', path)
+
+    if (!existsSync(`${path}/info.json`))
+        throw `${path}/info.json: does not exist`
+
+    const info = infoParser(
+        readJsonSync(`${path}/info.json`),
+        `${path}/info.json`
+    )
+
+    const output = {}
+    Object.entries(
+        resources as Record<
+            string,
+            { type: ResourceType; ext: string; optional: boolean }
+        >
+    ).forEach(([name, { type, ext, optional }]) =>
+        Object.assign(output, {
+            [name]: processResource(
+                `${path}/${name}`,
+                pathOutput,
+                type,
+                ext,
+                optional
+            ),
+        })
+    )
+
+    return { ...info, ...output } as T
+}
+
+function processResource(
     pathFile: string,
     pathOutput: string,
     type: ResourceType,
     ext: string,
-    optional = false
+    optional: boolean
 ) {
-    let output: { buffer: Buffer } | { srl: SRL<typeof type> }
+    let output: { buffer: Buffer } | { srl: SRL<ResourceType> }
 
     const pathFileSRL = `${pathFile}.srl`
     const pathFileExt = `${pathFile}.${ext}`
