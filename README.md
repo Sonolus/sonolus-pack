@@ -118,9 +118,7 @@ For example:
 |           info.json
 |           thumbnail[.png/.srl]
 |           data[.json/.srl]
-|           {clip}[.mp3/.srl]
-|           ...
-|           {clip}[.mp3/.srl]
+|           audio[.zip/.srl]
 |
 +---particles
 |   +---{particle}
@@ -303,11 +301,9 @@ Effect thumbnail.
 
 Effect data.
 
-Clips in effect data should simply be `string` that references the corresponding clip file.
+#### `audio[.zip/.srl]`
 
-#### `{clip}[.mp3/.srl]`
-
-Effect clip referenced in effect data.
+Effect audio.
 
 ### Particles
 
