@@ -1,6 +1,6 @@
 {
   "name": "sonolus-pack",
-  "version": "4.0.0",
+  "version": "4.0.1",
   "description": "CLI tool to pack Sonolus source files into repository and database",
   "author": "NonSpicyBurrito",
   "repository": "github:Sonolus/sonolus-pack",
@@ -17,19 +17,21 @@
     "build": "node ./build/prepare.js && tsc -p ."
   },
   "devDependencies": {
+    "@tsconfig/node16": "^1.0.3",
     "@types/fs-extra": "^9.0.13",
-    "@typescript-eslint/eslint-plugin": "^5.12.0",
-    "@typescript-eslint/parser": "^5.12.0",
-    "eslint": "^8.9.0",
-    "eslint-config-prettier": "^8.4.0",
-    "eslint-plugin-prettier": "^4.0.0",
-    "prettier": "^2.5.1",
-    "typescript": "^4.5.5"
+    "@typescript-eslint/eslint-plugin": "^5.44.0",
+    "@typescript-eslint/parser": "^5.44.0",
+    "eslint": "^8.28.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "prettier": "^2.8.0",
+    "prettier-plugin-organize-imports": "^3.2.1",
+    "typescript": "^4.9.3"
   },
   "dependencies": {
-    "commander": "^9.0.0",
-    "fs-extra": "^10.0.0",
-    "sonolus-core": "^5.0.0",
-    "zod": "^3.18.0"
+    "commander": "^9.4.1",
+    "fs-extra": "^10.1.0",
+    "sonolus-core": "^6.0.0",
+    "zod": "^3.19.1"
   }
 }
