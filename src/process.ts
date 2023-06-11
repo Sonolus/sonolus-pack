@@ -17,14 +17,14 @@ type ResourcesFromInfo<T> = {
         : never
 }
 
-export function processInfos<T>(
+export const processInfos = <T>(
     pathInput: string,
     pathOutput: string,
     dirname: string,
     infos: T[],
     infoParser: ParserFromInfo<Omit<T, 'name'>>,
     resources: ResourcesFromInfo<Omit<T, 'name'>>,
-) {
+) => {
     const pathDir = `${pathInput}/${dirname}`
 
     if (!existsSync(pathDir)) return
@@ -39,12 +39,12 @@ export function processInfos<T>(
         )
 }
 
-export function processInfo<T>(
+export const processInfo = <T>(
     path: string,
     pathOutput: string,
     infoParser: ParserFromInfo<T>,
     resources: ResourcesFromInfo<T>,
-) {
+) => {
     console.log('[INFO]', 'Packing:', path)
 
     if (!existsSync(`${path}/info.json`)) throw `${path}/info.json: does not exist`
@@ -63,13 +63,13 @@ export function processInfo<T>(
     return { ...info, ...output } as T
 }
 
-function processResource(
+const processResource = (
     pathFile: string,
     pathOutput: string,
     type: ResourceType,
     ext: string,
     optional: boolean,
-) {
+) => {
     let output: { buffer: Buffer } | { srl: SRL<ResourceType> }
 
     const pathFileSRL = `${pathFile}.srl`

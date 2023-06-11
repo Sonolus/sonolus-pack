@@ -21,6 +21,10 @@ const options = new Command()
 const pathInput = options.input
 const pathOutput = options.output
 
+const checkExists = (infos: { name: string }[], name: string, parent: string, path: string) => {
+    if (!infos.find((info) => info.name === name)) throw `${parent}: ${name} not found (${path})`
+}
+
 try {
     console.log('[INFO]', 'Packing:', pathInput)
     console.log()
@@ -123,10 +127,4 @@ try {
     console.error('[FAILED]', error)
 
     removeSync(pathOutput)
-}
-
-function checkExists(infos: { name: string }[], name: string, parent: string, path: string) {
-    if (!infos.find((info) => info.name === name)) {
-        throw `${parent}: ${name} not found (${path})`
-    }
 }
