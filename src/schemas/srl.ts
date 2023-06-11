@@ -8,6 +8,6 @@ export function getSRLParser<T extends ResourceType>(type: T) {
             type: z.literal(type),
             hash: z.string(),
             url: z.string(),
-        })
+        }),
     )
 }

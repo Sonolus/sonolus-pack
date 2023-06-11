@@ -27,12 +27,9 @@ try {
 
     emptyDirSync(pathOutput)
 
-    const info = processInfo<Database['info']>(
-        pathInput,
-        pathOutput,
-        partialServerInfoParser,
-        { banner: { type: 'ServerBanner', ext: 'png' } }
-    )
+    const info = processInfo<Database['info']>(pathInput, pathOutput, partialServerInfoParser, {
+        banner: { type: 'ServerBanner', ext: 'png' },
+    })
 
     const db: Database = {
         info,
@@ -44,32 +41,18 @@ try {
         engines: [],
     }
 
-    processInfos(
-        pathInput,
-        pathOutput,
-        'levels',
-        db.levels,
-        partialLevelInfoParser,
-        {
-            cover: { type: 'LevelCover', ext: 'png' },
-            bgm: { type: 'LevelBgm', ext: 'mp3' },
-            preview: { type: 'LevelPreview', ext: 'mp3', optional: true },
-            data: { type: 'LevelData', ext: 'json' },
-        }
-    )
+    processInfos(pathInput, pathOutput, 'levels', db.levels, partialLevelInfoParser, {
+        cover: { type: 'LevelCover', ext: 'png' },
+        bgm: { type: 'LevelBgm', ext: 'mp3' },
+        preview: { type: 'LevelPreview', ext: 'mp3', optional: true },
+        data: { type: 'LevelData', ext: 'json' },
+    })
 
-    processInfos(
-        pathInput,
-        pathOutput,
-        'skins',
-        db.skins,
-        partialSkinInfoParser,
-        {
-            thumbnail: { type: 'SkinThumbnail', ext: 'png' },
-            data: { type: 'SkinData', ext: 'json' },
-            texture: { type: 'SkinTexture', ext: 'png' },
-        }
-    )
+    processInfos(pathInput, pathOutput, 'skins', db.skins, partialSkinInfoParser, {
+        thumbnail: { type: 'SkinThumbnail', ext: 'png' },
+        data: { type: 'SkinData', ext: 'json' },
+        texture: { type: 'SkinTexture', ext: 'png' },
+    })
 
     processInfos(
         pathInput,
@@ -82,48 +65,27 @@ try {
             data: { type: 'BackgroundData', ext: 'json' },
             image: { type: 'BackgroundImage', ext: 'png' },
             configuration: { type: 'BackgroundConfiguration', ext: 'json' },
-        }
+        },
     )
 
-    processInfos(
-        pathInput,
-        pathOutput,
-        'effects',
-        db.effects,
-        partialEffectInfoParser,
-        {
-            thumbnail: { type: 'EffectThumbnail', ext: 'png' },
-            data: { type: 'EffectData', ext: 'json' },
-            audio: { type: 'EffectAudio', ext: 'zip' },
-        }
-    )
+    processInfos(pathInput, pathOutput, 'effects', db.effects, partialEffectInfoParser, {
+        thumbnail: { type: 'EffectThumbnail', ext: 'png' },
+        data: { type: 'EffectData', ext: 'json' },
+        audio: { type: 'EffectAudio', ext: 'zip' },
+    })
 
-    processInfos(
-        pathInput,
-        pathOutput,
-        'particles',
-        db.particles,
-        partialParticleInfoParser,
-        {
-            thumbnail: { type: 'ParticleThumbnail', ext: 'png' },
-            data: { type: 'ParticleData', ext: 'json' },
-            texture: { type: 'ParticleTexture', ext: 'png' },
-        }
-    )
+    processInfos(pathInput, pathOutput, 'particles', db.particles, partialParticleInfoParser, {
+        thumbnail: { type: 'ParticleThumbnail', ext: 'png' },
+        data: { type: 'ParticleData', ext: 'json' },
+        texture: { type: 'ParticleTexture', ext: 'png' },
+    })
 
-    processInfos(
-        pathInput,
-        pathOutput,
-        'engines',
-        db.engines,
-        partialEngineInfoParser,
-        {
-            thumbnail: { type: 'EngineThumbnail', ext: 'png' },
-            data: { type: 'EngineData', ext: 'json' },
-            rom: { type: 'EngineRom', ext: 'bin', optional: true },
-            configuration: { type: 'EngineConfiguration', ext: 'json' },
-        }
-    )
+    processInfos(pathInput, pathOutput, 'engines', db.engines, partialEngineInfoParser, {
+        thumbnail: { type: 'EngineThumbnail', ext: 'png' },
+        data: { type: 'EngineData', ext: 'json' },
+        rom: { type: 'EngineRom', ext: 'bin', optional: true },
+        configuration: { type: 'EngineConfiguration', ext: 'json' },
+    })
 
     db.levels.forEach((level) => {
         const parent = `Level/${level.name}`
@@ -133,28 +95,13 @@ try {
             checkExists(db.skins, level.useSkin.item, parent, '.useSkin.item')
         }
         if (!level.useBackground.useDefault) {
-            checkExists(
-                db.backgrounds,
-                level.useBackground.item,
-                parent,
-                '.useBackground.item'
-            )
+            checkExists(db.backgrounds, level.useBackground.item, parent, '.useBackground.item')
         }
         if (!level.useEffect.useDefault) {
-            checkExists(
-                db.effects,
-                level.useEffect.item,
-                parent,
-                '.useEffect.item'
-            )
+            checkExists(db.effects, level.useEffect.item, parent, '.useEffect.item')
         }
         if (!level.useParticle.useDefault) {
-            checkExists(
-                db.particles,
-                level.useParticle.item,
-                parent,
-                '.useParticle.item'
-            )
+            checkExists(db.particles, level.useParticle.item, parent, '.useParticle.item')
         }
     })
 
@@ -178,12 +125,7 @@ try {
     removeSync(pathOutput)
 }
 
-function checkExists(
-    infos: { name: string }[],
-    name: string,
-    parent: string,
-    path: string
-) {
+function checkExists(infos: { name: string }[], name: string, parent: string, path: string) {
     if (!infos.find((info) => info.name === name)) {
         throw `${parent}: ${name} not found (${path})`
     }
