@@ -11,6 +11,4 @@ const partialBackgroundInfoSchema = z.object({
     meta: z.unknown(),
 })
 
-export const partialBackgroundInfoParser = getParser(
-    partialBackgroundInfoSchema
-)
+export const partialBackgroundInfoParser = getParser(partialBackgroundInfoSchema)

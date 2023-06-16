@@ -1,10 +1,4 @@
-import {
-    existsSync,
-    outputFileSync,
-    readdirSync,
-    readFileSync,
-    readJsonSync,
-} from 'fs-extra'
+import { existsSync, outputFileSync, readdirSync, readFileSync, readJsonSync } from 'fs-extra'
 import { compressSync, hash, ResourceType, SRL } from 'sonolus-core'
 import { gzipSync } from 'zlib'
 import { Parser } from './schemas/parser'
@@ -23,14 +17,14 @@ type ResourcesFromInfo<T> = {
         : never
 }
 
-export function processInfos<T>(
+export const processInfos = <T>(
     pathInput: string,
     pathOutput: string,
     dirname: string,
     infos: T[],
     infoParser: ParserFromInfo<Omit<T, 'name'>>,
-    resources: ResourcesFromInfo<Omit<T, 'name'>>
-) {
+    resources: ResourcesFromInfo<Omit<T, 'name'>>,
+) => {
     const pathDir = `${pathInput}/${dirname}`
 
     if (!existsSync(pathDir)) return
@@ -40,60 +34,42 @@ export function processInfos<T>(
         .forEach(({ name }) =>
             infos.push({
                 name,
-                ...processInfo(
-                    `${pathDir}/${name}`,
-                    pathOutput,
-                    infoParser,
-                    resources
-                ),
-            } as unknown as T)
+                ...processInfo(`${pathDir}/${name}`, pathOutput, infoParser, resources),
+            } as unknown as T),
         )
 }
 
-export function processInfo<T>(
+export const processInfo = <T>(
     path: string,
     pathOutput: string,
     infoParser: ParserFromInfo<T>,
-    resources: ResourcesFromInfo<T>
-) {
+    resources: ResourcesFromInfo<T>,
+) => {
     console.log('[INFO]', 'Packing:', path)
 
-    if (!existsSync(`${path}/info.json`))
-        throw `${path}/info.json: does not exist`
+    if (!existsSync(`${path}/info.json`)) throw `${path}/info.json: does not exist`
 
-    const info = infoParser(
-        readJsonSync(`${path}/info.json`),
-        `${path}/info.json`
-    )
+    const info = infoParser(readJsonSync(`${path}/info.json`), `${path}/info.json`)
 
     const output = {}
     Object.entries(
-        resources as Record<
-            string,
-            { type: ResourceType; ext: string; optional: boolean }
-        >
+        resources as Record<string, { type: ResourceType; ext: string; optional: boolean }>,
     ).forEach(([name, { type, ext, optional }]) =>
         Object.assign(output, {
-            [name]: processResource(
-                `${path}/${name}`,
-                pathOutput,
-                type,
-                ext,
-                optional
-            ),
-        })
+            [name]: processResource(`${path}/${name}`, pathOutput, type, ext, optional),
+        }),
     )
 
     return { ...info, ...output } as T
 }
 
-function processResource(
+const processResource = (
     pathFile: string,
     pathOutput: string,
     type: ResourceType,
     ext: string,
-    optional: boolean
-) {
+    optional: boolean,
+) => {
     let output: { buffer: Buffer } | { srl: SRL<ResourceType> }
 
     const pathFileSRL = `${pathFile}.srl`
@@ -116,10 +92,7 @@ function processResource(
             output = { buffer: readFileSync(pathFileExt) }
         }
     } else if (optional) {
-        console.log(
-            '[INFO]',
-            `${pathFile}[.${ext}/.srl]: does not exist, skipped`
-        )
+        console.log('[INFO]', `${pathFile}[.${ext}/.srl]: does not exist, skipped`)
         return
     } else {
         console.log('[WARNING]', `${pathFile}[.${ext}/.srl]: does not exist`)
@@ -128,10 +101,7 @@ function processResource(
 
     if ('buffer' in output) {
         const outputHash = hash(output.buffer)
-        outputFileSync(
-            `${pathOutput}/repository/${type}/${outputHash}`,
-            output.buffer
-        )
+        outputFileSync(`${pathOutput}/repository/${type}/${outputHash}`, output.buffer)
         output = {
             srl: {
                 type,
