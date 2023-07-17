@@ -86,7 +86,8 @@ try {
 
     processInfos(pathInput, pathOutput, 'engines', db.engines, partialEngineInfoParser, {
         thumbnail: { type: 'EngineThumbnail', ext: 'png' },
-        data: { type: 'EngineData', ext: 'json' },
+        playData: { type: 'EnginePlayData', ext: 'json' },
+        tutorialData: { type: 'EngineTutorialData', ext: 'json' },
         rom: { type: 'EngineRom', ext: 'bin', optional: true },
         configuration: { type: 'EngineConfiguration', ext: 'json' },
     })
