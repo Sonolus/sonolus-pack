@@ -47,7 +47,7 @@ export const processInfo = <T>(
 ) => {
     console.log('[INFO]', 'Packing:', path)
 
-    if (!existsSync(`${path}/info.json`)) throw `${path}/info.json: does not exist`
+    if (!existsSync(`${path}/info.json`)) throw new Error(`${path}/info.json: does not exist`)
 
     const info = infoParser(readJsonSync(`${path}/info.json`), `${path}/info.json`)
 
@@ -82,7 +82,7 @@ const processResource = (
         output = { buffer: readFileSync(`${pathFile}`) }
     } else if (existsSync(pathFileExt)) {
         if (ext === 'json') {
-            const json = readJsonSync(pathFileExt)
+            const json: unknown = readJsonSync(pathFileExt)
             output = { buffer: compressSync(json) }
         } else if (ext === 'bin') {
             output = {

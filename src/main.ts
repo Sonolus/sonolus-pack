@@ -18,11 +18,12 @@ const options = new Command()
     .parse()
     .opts()
 
-const pathInput = options.input
-const pathOutput = options.output
+const pathInput = options.input as string
+const pathOutput = options.output as string
 
 const checkExists = (infos: { name: string }[], name: string, parent: string, path: string) => {
-    if (!infos.find((info) => info.name === name)) throw `${parent}: ${name} not found (${path})`
+    if (!infos.find((info) => info.name === name))
+        throw new Error(`${parent}: ${name} not found (${path})`)
 }
 
 try {
