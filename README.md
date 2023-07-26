@@ -135,7 +135,8 @@ For example:
     \---{engine}
             info.json
             thumbnail[.png/.srl]
-            data[.json/.srl]
+            playData[.json/.srl]
+            tutorialData[.json/.srl]
             rom[.bin/.srl]
             configuration[.json/.srl]
 ```
@@ -363,9 +364,13 @@ type EngineInfo = {
 
 Engine thumbnail.
 
-#### `data[.json/.srl]`
+#### `playData[.json/.srl]`
 
-Engine data.
+Engine play data.
+
+#### `tutorialData[.json/.srl]`
+
+Engine tutorial data.
 
 #### `rom[.bin/.srl]`
 
