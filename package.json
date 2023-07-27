@@ -14,7 +14,7 @@
   ],
   "scripts": {
     "prebuild": "tsc -p . --noEmit && eslint --ext .ts ./src",
-    "build": "node ./build/prepare.js && tsc -p ."
+    "build": "tsc -p ."
   },
   "devDependencies": {
     "@types/fs-extra": "^11.0.1",

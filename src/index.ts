@@ -1,3 +1,5 @@
+#! /usr/bin/env node
+
 import { Command } from 'commander'
 import { emptyDirSync, outputJsonSync, removeSync } from 'fs-extra'
 import { Database } from 'sonolus-core'
