@@ -14,5 +14,6 @@ module.exports = {
     rules: {
         'prettier/prettier': 'error',
         '@typescript-eslint/consistent-type-definitions': ['error', 'type'],
+        '@typescript-eslint/switch-exhaustiveness-check': 'error',
     },
 }
