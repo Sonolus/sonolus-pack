@@ -1,3 +1,5 @@
+#! /usr/bin/env node
+
 import { Command } from 'commander'
 import { emptyDirSync, outputJsonSync, removeSync } from 'fs-extra'
 import { Database } from 'sonolus-core'
@@ -12,17 +14,18 @@ import { partialSkinInfoParser } from './schemas/skin-info'
 
 const options = new Command()
     .name('sonolus-pack')
-    .version('5.0.0')
+    .version('5.1.0')
     .option('-i, --input <value>', 'input directory', 'source')
     .option('-o, --output <value>', 'output directory', 'pack')
     .parse()
     .opts()
 
-const pathInput = options.input
-const pathOutput = options.output
+const pathInput = options.input as string
+const pathOutput = options.output as string
 
 const checkExists = (infos: { name: string }[], name: string, parent: string, path: string) => {
-    if (!infos.find((info) => info.name === name)) throw `${parent}: ${name} not found (${path})`
+    if (!infos.find((info) => info.name === name))
+        throw new Error(`${parent}: ${name} not found (${path})`)
 }
 
 try {
@@ -86,7 +89,8 @@ try {
 
     processInfos(pathInput, pathOutput, 'engines', db.engines, partialEngineInfoParser, {
         thumbnail: { type: 'EngineThumbnail', ext: 'png' },
-        data: { type: 'EngineData', ext: 'json' },
+        playData: { type: 'EnginePlayData', ext: 'json' },
+        tutorialData: { type: 'EngineTutorialData', ext: 'json' },
         rom: { type: 'EngineRom', ext: 'bin', optional: true },
         configuration: { type: 'EngineConfiguration', ext: 'json' },
     })
