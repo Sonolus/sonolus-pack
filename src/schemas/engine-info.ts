@@ -3,7 +3,7 @@ import { localizationTextSchema } from './localization-text'
 import { getParser } from './parser'
 
 const partialEngineInfoSchema = z.object({
-    version: z.literal(9),
+    version: z.literal(10),
     title: localizationTextSchema,
     subtitle: localizationTextSchema,
     author: localizationTextSchema,
