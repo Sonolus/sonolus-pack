@@ -14,7 +14,7 @@ import { partialSkinInfoParser } from './schemas/skin-info'
 
 const options = new Command()
     .name('sonolus-pack')
-    .version('5.2.0')
+    .version('5.3.0')
     .option('-i, --input <value>', 'input directory', 'source')
     .option('-o, --output <value>', 'output directory', 'pack')
     .parse()
@@ -90,6 +90,7 @@ try {
     processInfos(pathInput, pathOutput, 'engines', db.engines, partialEngineInfoParser, {
         thumbnail: { type: 'EngineThumbnail', ext: 'png' },
         playData: { type: 'EnginePlayData', ext: 'json' },
+        watchData: { type: 'EngineWatchData', ext: 'json' },
         previewData: { type: 'EnginePreviewData', ext: 'json' },
         tutorialData: { type: 'EngineTutorialData', ext: 'json' },
         rom: { type: 'EngineRom', ext: 'bin', optional: true },
