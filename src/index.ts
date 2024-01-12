@@ -9,6 +9,7 @@ import { partialEffectInfoParser } from './schemas/effect-info'
 import { partialEngineInfoParser } from './schemas/engine-info'
 import { partialLevelInfoParser } from './schemas/level-info'
 import { partialParticleInfoParser } from './schemas/particle-info'
+import { partialReplayInfoParser } from './schemas/replay-info'
 import { partialServerInfoParser } from './schemas/server-info'
 import { partialSkinInfoParser } from './schemas/skin-info'
 
@@ -46,6 +47,7 @@ try {
         effects: [],
         particles: [],
         engines: [],
+        replays: [],
     }
 
     processInfos(pathInput, pathOutput, 'levels', db.levels, partialLevelInfoParser, {
@@ -97,6 +99,11 @@ try {
         configuration: { type: 'EngineConfiguration', ext: 'json' },
     })
 
+    processInfos(pathInput, pathOutput, 'replays', db.replays, partialReplayInfoParser, {
+        data: { type: 'ReplayData', ext: 'json' },
+        configuration: { type: 'ReplayConfiguration', ext: 'json' },
+    })
+
     db.levels.forEach((level) => {
         const parent = `Level/${level.name}`
 
@@ -122,6 +129,12 @@ try {
         checkExists(db.backgrounds, engine.background, parent, '.background')
         checkExists(db.effects, engine.effect, parent, '.effect')
         checkExists(db.particles, engine.particle, parent, '.particle')
+    })
+
+    db.replays.forEach((replay) => {
+        const parent = `Replay/${replay.name}`
+
+        checkExists(db.skins, replay.level, parent, '.level')
     })
 
     outputJsonSync(`${pathOutput}/db.json`, db)
