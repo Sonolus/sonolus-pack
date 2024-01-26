@@ -4,10 +4,10 @@ import { gzipSync } from 'zlib'
 import { Parser } from './schemas/parser'
 import { getSRLParser } from './schemas/srl'
 
-type ParserFromInfo<T> = Parser<{
+type ParserFrom<T> = Parser<{
     [key in keyof T as T[key] extends SRL<ResourceType> ? never : key]: T[key]
 }>
-type ResourcesFromInfo<T> = {
+type ResourcesFrom<T> = {
     [key in keyof T as T[key] extends SRL<ResourceType> | undefined
         ? key
         : never]-?: T[key] extends SRL<infer U> | undefined
@@ -17,13 +17,13 @@ type ResourcesFromInfo<T> = {
         : never
 }
 
-export const processInfos = <T>(
+export const processItems = <T>(
     pathInput: string,
     pathOutput: string,
     dirname: string,
-    infos: T[],
-    infoParser: ParserFromInfo<Omit<T, 'name'>>,
-    resources: ResourcesFromInfo<Omit<T, 'name'>>,
+    items: T[],
+    parser: ParserFrom<Omit<T, 'name'>>,
+    resources: ResourcesFrom<Omit<T, 'name'>>,
 ) => {
     const pathDir = `${pathInput}/${dirname}`
 
@@ -32,35 +32,40 @@ export const processInfos = <T>(
     readdirSync(pathDir, { withFileTypes: true })
         .filter((dirent) => dirent.isDirectory())
         .forEach(({ name }) =>
-            infos.push({
+            items.push({
                 name,
-                ...processInfo(`${pathDir}/${name}`, pathOutput, infoParser, resources),
+                ...processItem(`${pathDir}/${name}`, pathOutput, 'item', parser, resources),
             } as unknown as T),
         )
 }
 
-export const processInfo = <T>(
-    path: string,
+export const processItem = <T>(
+    pathInput: string,
     pathOutput: string,
-    infoParser: ParserFromInfo<T>,
-    resources: ResourcesFromInfo<T>,
+    filename: string,
+    parser: ParserFrom<T>,
+    resources: ResourcesFrom<T>,
 ) => {
-    console.log('[INFO]', 'Packing:', path)
+    console.log('[INFO]', 'Packing:', pathInput)
 
-    if (!existsSync(`${path}/info.json`)) throw new Error(`${path}/info.json: does not exist`)
+    if (!existsSync(`${pathInput}/${filename}.json`))
+        throw new Error(`${pathInput}/${filename}.json: does not exist`)
 
-    const info = infoParser(readJsonSync(`${path}/info.json`), `${path}/info.json`)
+    const item = parser(
+        readJsonSync(`${pathInput}/${filename}.json`),
+        `${pathInput}/${filename}.json`,
+    )
 
     const output = {}
     Object.entries(
         resources as Record<string, { type: ResourceType; ext: string; optional: boolean }>,
     ).forEach(([name, { type, ext, optional }]) =>
         Object.assign(output, {
-            [name]: processResource(`${path}/${name}`, pathOutput, type, ext, optional),
+            [name]: processResource(`${pathInput}/${name}`, pathOutput, type, ext, optional),
         }),
     )
 
-    return { ...info, ...output } as T
+    return { ...item, ...output } as T
 }
 
 const processResource = (

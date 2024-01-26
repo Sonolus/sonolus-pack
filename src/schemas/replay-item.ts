@@ -1,14 +1,17 @@
 import { z } from 'zod'
 import { localizationTextSchema } from './localization-text'
 import { getParser } from './parser'
+import { databaseTagSchema } from './tag'
 
-const partialEffectInfoSchema = z.object({
-    version: z.literal(5),
+const partialDatabaseReplayItemSchema = z.object({
+    version: z.literal(1),
     title: localizationTextSchema,
     subtitle: localizationTextSchema,
     author: localizationTextSchema,
+    tags: z.array(databaseTagSchema),
     description: localizationTextSchema,
+    level: z.string(),
     meta: z.unknown(),
 })
 
-export const partialEffectInfoParser = getParser(partialEffectInfoSchema)
+export const partialDatabaseReplayItemParser = getParser(partialDatabaseReplayItemSchema)

@@ -2,16 +2,18 @@
 
 import { Command } from 'commander'
 import { emptyDirSync, outputJsonSync, removeSync } from 'fs-extra'
-import { Database } from 'sonolus-core'
-import { processInfo, processInfos } from './process'
-import { partialBackgroundInfoParser } from './schemas/background-info'
-import { partialEffectInfoParser } from './schemas/effect-info'
-import { partialEngineInfoParser } from './schemas/engine-info'
-import { partialLevelInfoParser } from './schemas/level-info'
-import { partialParticleInfoParser } from './schemas/particle-info'
-import { partialReplayInfoParser } from './schemas/replay-info'
-import { partialServerInfoParser } from './schemas/server-info'
-import { partialSkinInfoParser } from './schemas/skin-info'
+import { Database, DatabaseServerInfo } from 'sonolus-core'
+import { processItem, processItems } from './process'
+import { partialDatabaseBackgroundItemParser } from './schemas/background-item'
+import { partialDatabaseEffectItemParser } from './schemas/effect-item'
+import { partialDatabaseEngineItemParser } from './schemas/engine-item'
+import { partialDatabaseLevelItemParser } from './schemas/level-item'
+import { partialDatabaseParticleItemParser } from './schemas/particle-item'
+import { partialDatabasePlaylistItemParser } from './schemas/playlist-item'
+import { partialDatabasePostItemParser } from './schemas/post-item'
+import { partialDatabaseReplayItemParser } from './schemas/replay-item'
+import { partialDatabaseServerInfoParser } from './schemas/server-info'
+import { partialDatabaseSkinItemParser } from './schemas/skin-item'
 
 const options = new Command()
     .name('sonolus-pack')
@@ -24,8 +26,8 @@ const options = new Command()
 const pathInput = options.input as string
 const pathOutput = options.output as string
 
-const checkExists = (infos: { name: string }[], name: string, parent: string, path: string) => {
-    if (!infos.find((info) => info.name === name))
+const checkExists = (items: { name: string }[], name: string, parent: string, path: string) => {
+    if (!items.find((item) => item.name === name))
         throw new Error(`${parent}: ${name} not found (${path})`)
 }
 
@@ -35,12 +37,20 @@ try {
 
     emptyDirSync(pathOutput)
 
-    const info = processInfo<Database['info']>(pathInput, pathOutput, partialServerInfoParser, {
-        banner: { type: 'ServerBanner', ext: 'png' },
-    })
+    const serverInfo = processItem<DatabaseServerInfo>(
+        pathInput,
+        pathOutput,
+        'info',
+        partialDatabaseServerInfoParser,
+        {
+            banner: { type: 'ServerBanner', ext: 'png', optional: true },
+        },
+    )
 
     const db: Database = {
-        info,
+        info: serverInfo,
+        posts: [],
+        playlists: [],
         levels: [],
         skins: [],
         backgrounds: [],
@@ -50,25 +60,40 @@ try {
         replays: [],
     }
 
-    processInfos(pathInput, pathOutput, 'levels', db.levels, partialLevelInfoParser, {
+    processItems(pathInput, pathOutput, 'posts', db.posts, partialDatabasePostItemParser, {
+        thumbnail: { type: 'PostThumbnail', ext: 'png', optional: true },
+    })
+
+    processItems(
+        pathInput,
+        pathOutput,
+        'playlists',
+        db.playlists,
+        partialDatabasePlaylistItemParser,
+        {
+            thumbnail: { type: 'PlaylistThumbnail', ext: 'png', optional: true },
+        },
+    )
+
+    processItems(pathInput, pathOutput, 'levels', db.levels, partialDatabaseLevelItemParser, {
         cover: { type: 'LevelCover', ext: 'png' },
         bgm: { type: 'LevelBgm', ext: 'mp3' },
         preview: { type: 'LevelPreview', ext: 'mp3', optional: true },
         data: { type: 'LevelData', ext: 'json' },
     })
 
-    processInfos(pathInput, pathOutput, 'skins', db.skins, partialSkinInfoParser, {
+    processItems(pathInput, pathOutput, 'skins', db.skins, partialDatabaseSkinItemParser, {
         thumbnail: { type: 'SkinThumbnail', ext: 'png' },
         data: { type: 'SkinData', ext: 'json' },
         texture: { type: 'SkinTexture', ext: 'png' },
     })
 
-    processInfos(
+    processItems(
         pathInput,
         pathOutput,
         'backgrounds',
         db.backgrounds,
-        partialBackgroundInfoParser,
+        partialDatabaseBackgroundItemParser,
         {
             thumbnail: { type: 'BackgroundThumbnail', ext: 'png' },
             data: { type: 'BackgroundData', ext: 'json' },
@@ -77,19 +102,26 @@ try {
         },
     )
 
-    processInfos(pathInput, pathOutput, 'effects', db.effects, partialEffectInfoParser, {
+    processItems(pathInput, pathOutput, 'effects', db.effects, partialDatabaseEffectItemParser, {
         thumbnail: { type: 'EffectThumbnail', ext: 'png' },
         data: { type: 'EffectData', ext: 'json' },
         audio: { type: 'EffectAudio', ext: 'zip' },
     })
 
-    processInfos(pathInput, pathOutput, 'particles', db.particles, partialParticleInfoParser, {
-        thumbnail: { type: 'ParticleThumbnail', ext: 'png' },
-        data: { type: 'ParticleData', ext: 'json' },
-        texture: { type: 'ParticleTexture', ext: 'png' },
-    })
+    processItems(
+        pathInput,
+        pathOutput,
+        'particles',
+        db.particles,
+        partialDatabaseParticleItemParser,
+        {
+            thumbnail: { type: 'ParticleThumbnail', ext: 'png' },
+            data: { type: 'ParticleData', ext: 'json' },
+            texture: { type: 'ParticleTexture', ext: 'png' },
+        },
+    )
 
-    processInfos(pathInput, pathOutput, 'engines', db.engines, partialEngineInfoParser, {
+    processItems(pathInput, pathOutput, 'engines', db.engines, partialDatabaseEngineItemParser, {
         thumbnail: { type: 'EngineThumbnail', ext: 'png' },
         playData: { type: 'EnginePlayData', ext: 'json' },
         watchData: { type: 'EngineWatchData', ext: 'json' },
@@ -99,9 +131,17 @@ try {
         configuration: { type: 'EngineConfiguration', ext: 'json' },
     })
 
-    processInfos(pathInput, pathOutput, 'replays', db.replays, partialReplayInfoParser, {
+    processItems(pathInput, pathOutput, 'replays', db.replays, partialDatabaseReplayItemParser, {
         data: { type: 'ReplayData', ext: 'json' },
         configuration: { type: 'ReplayConfiguration', ext: 'json' },
+    })
+
+    db.playlists.forEach((playlist) => {
+        const parent = `Playlist/${playlist.name}`
+
+        playlist.levels.forEach((level, index) => {
+            checkExists(db.levels, level, parent, `.levels[${index}]`)
+        })
     })
 
     db.levels.forEach((level) => {
@@ -134,7 +174,7 @@ try {
     db.replays.forEach((replay) => {
         const parent = `Replay/${replay.name}`
 
-        checkExists(db.skins, replay.level, parent, '.level')
+        checkExists(db.levels, replay.level, parent, '.level')
     })
 
     outputJsonSync(`${pathOutput}/db.json`, db)
