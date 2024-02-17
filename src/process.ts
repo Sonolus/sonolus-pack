@@ -1,19 +1,17 @@
 import { existsSync, outputFileSync, readdirSync, readFileSync, readJsonSync } from 'fs-extra'
-import { compressSync, hash, ResourceType, SRL } from 'sonolus-core'
+import { compressSync, hash, SRL } from 'sonolus-core'
 import { gzipSync } from 'zlib'
 import { Parser } from './schemas/parser'
-import { getSRLParser } from './schemas/srl'
+import { srlParser } from './schemas/srl'
 
 type ParserFrom<T> = Parser<{
-    [key in keyof T as T[key] extends SRL<ResourceType> ? never : key]: T[key]
+    [K in keyof T as T[K] extends SRL ? never : K]: T[K]
 }>
 type ResourcesFrom<T> = {
-    [key in keyof T as T[key] extends SRL<ResourceType> | undefined
-        ? key
-        : never]-?: T[key] extends SRL<infer U> | undefined
-        ? T[key] extends SRL<ResourceType>
-            ? { type: U; ext: string }
-            : { type: U; ext: string; optional: true }
+    [K in keyof T as T[K] extends SRL | undefined ? K : never]-?: T[K] extends SRL | undefined
+        ? T[K] extends SRL
+            ? { ext: string }
+            : { ext: string; optional: true }
         : never
 }
 
@@ -57,31 +55,23 @@ export const processItem = <T>(
     )
 
     const output = {}
-    Object.entries(
-        resources as Record<string, { type: ResourceType; ext: string; optional: boolean }>,
-    ).forEach(([name, { type, ext, optional }]) =>
-        Object.assign(output, {
-            [name]: processResource(`${pathInput}/${name}`, pathOutput, type, ext, optional),
-        }),
+    Object.entries(resources as Record<string, { ext: string; optional: boolean }>).forEach(
+        ([name, { ext, optional }]) =>
+            Object.assign(output, {
+                [name]: processResource(`${pathInput}/${name}`, pathOutput, ext, optional),
+            }),
     )
 
     return { ...item, ...output } as T
 }
 
-const processResource = (
-    pathFile: string,
-    pathOutput: string,
-    type: ResourceType,
-    ext: string,
-    optional: boolean,
-) => {
-    let output: { buffer: Buffer } | { srl: SRL<ResourceType> }
+const processResource = (pathFile: string, pathOutput: string, ext: string, optional: boolean) => {
+    let output: { buffer: Buffer } | { srl: SRL }
 
     const pathFileSRL = `${pathFile}.srl`
     const pathFileExt = `${pathFile}.${ext}`
 
     if (existsSync(pathFileSRL)) {
-        const srlParser = getSRLParser(type)
         output = { srl: srlParser(readJsonSync(pathFileSRL), pathFileSRL) }
     } else if (existsSync(`${pathFile}`)) {
         output = { buffer: readFileSync(`${pathFile}`) }
@@ -101,18 +91,14 @@ const processResource = (
         return
     } else {
         console.log('[WARNING]', `${pathFile}[.${ext}/.srl]: does not exist`)
-        output = { srl: { type, hash: '', url: '' } }
+        output = { srl: { hash: '', url: '' } }
     }
 
     if ('buffer' in output) {
         const outputHash = hash(output.buffer)
-        outputFileSync(`${pathOutput}/repository/${type}/${outputHash}`, output.buffer)
+        outputFileSync(`${pathOutput}/repository/${outputHash}`, output.buffer)
         output = {
-            srl: {
-                type,
-                hash: outputHash,
-                url: `/sonolus/repository/${type}/${outputHash}`,
-            },
+            srl: { hash: outputHash, url: `/sonolus/repository/${outputHash}` },
         }
     }
 

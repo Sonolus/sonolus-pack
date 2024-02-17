@@ -4,7 +4,7 @@ import { getParser } from './parser'
 import { databaseTagSchema } from './tag'
 
 const partialDatabaseParticleItemSchema = z.object({
-    version: z.literal(2),
+    version: z.literal(3),
     title: localizationTextSchema,
     subtitle: localizationTextSchema,
     author: localizationTextSchema,

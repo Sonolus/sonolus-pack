@@ -43,7 +43,7 @@ try {
         'info',
         partialDatabaseServerInfoParser,
         {
-            banner: { type: 'ServerBanner', ext: 'png', optional: true },
+            banner: { ext: 'png', optional: true },
         },
     )
 
@@ -61,7 +61,7 @@ try {
     }
 
     processItems(pathInput, pathOutput, 'posts', db.posts, partialDatabasePostItemParser, {
-        thumbnail: { type: 'PostThumbnail', ext: 'png', optional: true },
+        thumbnail: { ext: 'png', optional: true },
     })
 
     processItems(
@@ -71,21 +71,21 @@ try {
         db.playlists,
         partialDatabasePlaylistItemParser,
         {
-            thumbnail: { type: 'PlaylistThumbnail', ext: 'png', optional: true },
+            thumbnail: { ext: 'png', optional: true },
         },
     )
 
     processItems(pathInput, pathOutput, 'levels', db.levels, partialDatabaseLevelItemParser, {
-        cover: { type: 'LevelCover', ext: 'png' },
-        bgm: { type: 'LevelBgm', ext: 'mp3' },
-        preview: { type: 'LevelPreview', ext: 'mp3', optional: true },
-        data: { type: 'LevelData', ext: 'json' },
+        cover: { ext: 'png' },
+        bgm: { ext: 'mp3' },
+        preview: { ext: 'mp3', optional: true },
+        data: { ext: 'json' },
     })
 
     processItems(pathInput, pathOutput, 'skins', db.skins, partialDatabaseSkinItemParser, {
-        thumbnail: { type: 'SkinThumbnail', ext: 'png' },
-        data: { type: 'SkinData', ext: 'json' },
-        texture: { type: 'SkinTexture', ext: 'png' },
+        thumbnail: { ext: 'png' },
+        data: { ext: 'json' },
+        texture: { ext: 'png' },
     })
 
     processItems(
@@ -95,17 +95,17 @@ try {
         db.backgrounds,
         partialDatabaseBackgroundItemParser,
         {
-            thumbnail: { type: 'BackgroundThumbnail', ext: 'png' },
-            data: { type: 'BackgroundData', ext: 'json' },
-            image: { type: 'BackgroundImage', ext: 'png' },
-            configuration: { type: 'BackgroundConfiguration', ext: 'json' },
+            thumbnail: { ext: 'png' },
+            data: { ext: 'json' },
+            image: { ext: 'png' },
+            configuration: { ext: 'json' },
         },
     )
 
     processItems(pathInput, pathOutput, 'effects', db.effects, partialDatabaseEffectItemParser, {
-        thumbnail: { type: 'EffectThumbnail', ext: 'png' },
-        data: { type: 'EffectData', ext: 'json' },
-        audio: { type: 'EffectAudio', ext: 'zip' },
+        thumbnail: { ext: 'png' },
+        data: { ext: 'json' },
+        audio: { ext: 'zip' },
     })
 
     processItems(
@@ -115,25 +115,25 @@ try {
         db.particles,
         partialDatabaseParticleItemParser,
         {
-            thumbnail: { type: 'ParticleThumbnail', ext: 'png' },
-            data: { type: 'ParticleData', ext: 'json' },
-            texture: { type: 'ParticleTexture', ext: 'png' },
+            thumbnail: { ext: 'png' },
+            data: { ext: 'json' },
+            texture: { ext: 'png' },
         },
     )
 
     processItems(pathInput, pathOutput, 'engines', db.engines, partialDatabaseEngineItemParser, {
-        thumbnail: { type: 'EngineThumbnail', ext: 'png' },
-        playData: { type: 'EnginePlayData', ext: 'json' },
-        watchData: { type: 'EngineWatchData', ext: 'json' },
-        previewData: { type: 'EnginePreviewData', ext: 'json' },
-        tutorialData: { type: 'EngineTutorialData', ext: 'json' },
-        rom: { type: 'EngineRom', ext: 'bin', optional: true },
-        configuration: { type: 'EngineConfiguration', ext: 'json' },
+        thumbnail: { ext: 'png' },
+        playData: { ext: 'json' },
+        watchData: { ext: 'json' },
+        previewData: { ext: 'json' },
+        tutorialData: { ext: 'json' },
+        rom: { ext: 'bin', optional: true },
+        configuration: { ext: 'json' },
     })
 
     processItems(pathInput, pathOutput, 'replays', db.replays, partialDatabaseReplayItemParser, {
-        data: { type: 'ReplayData', ext: 'json' },
-        configuration: { type: 'ReplayConfiguration', ext: 'json' },
+        data: { ext: 'json' },
+        configuration: { ext: 'json' },
     })
 
     db.playlists.forEach((playlist) => {
