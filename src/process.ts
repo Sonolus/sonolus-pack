@@ -1,5 +1,5 @@
+import { compressSync, hash, SRL } from '@sonolus/core'
 import { existsSync, outputFileSync, readdirSync, readFileSync, readJsonSync } from 'fs-extra'
-import { compressSync, hash, SRL } from 'sonolus-core'
 import { gzipSync } from 'zlib'
 import { Parser } from './schemas/parser'
 import { srlParser } from './schemas/srl'

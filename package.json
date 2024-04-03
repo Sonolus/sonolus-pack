@@ -27,9 +27,9 @@
     "typescript": "~5.2.2"
   },
   "dependencies": {
+    "@sonolus/core": "~7.5.0",
     "commander": "^11.1.0",
     "fs-extra": "^11.1.1",
-    "sonolus-core": "7.5.0-alpha.4",
     "zod": "^3.22.4"
   }
 }

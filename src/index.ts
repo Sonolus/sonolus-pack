@@ -1,8 +1,8 @@
 #! /usr/bin/env node
 
+import { Database, DatabaseServerInfo } from '@sonolus/core'
 import { Command } from 'commander'
 import { emptyDirSync, outputJsonSync, removeSync } from 'fs-extra'
-import { Database, DatabaseServerInfo } from 'sonolus-core'
 import { processItem, processItems } from './process'
 import { partialDatabaseBackgroundItemParser } from './schemas/background-item'
 import { partialDatabaseEffectItemParser } from './schemas/effect-item'
