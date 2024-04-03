@@ -1,4 +1,4 @@
-# sonolus-pack
+# Sonolus Pack
 
 CLI tool to pack Sonolus source files into repository and database.
 
@@ -18,13 +18,13 @@ Use `npx` to execute without installing.
 Packing using default options:
 
 ```
-npx sonolus-pack
+npx @sonolus/pack
 ```
 
 Use `-h` to see a list of available options:
 
 ```
-npx sonolus-pack -h
+npx @sonolus/pack -h
 ```
 
 ### Install Globally
@@ -32,7 +32,7 @@ npx sonolus-pack -h
 Installing globally (only need once):
 
 ```
-npm i -g sonolus-pack
+npm i -g @sonolus/pack
 ```
 
 `sonolus-pack` will become available to use:
