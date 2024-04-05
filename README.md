@@ -1,4 +1,4 @@
-# sonolus-pack
+# Sonolus Pack
 
 CLI tool to pack Sonolus source files into repository and database.
 
@@ -18,13 +18,13 @@ Use `npx` to execute without installing.
 Packing using default options:
 
 ```
-npx sonolus-pack
+npx @sonolus/pack
 ```
 
 Use `-h` to see a list of available options:
 
 ```
-npx sonolus-pack -h
+npx @sonolus/pack -h
 ```
 
 ### Install Globally
@@ -32,7 +32,7 @@ npx sonolus-pack -h
 Installing globally (only need once):
 
 ```
-npm i -g sonolus-pack
+npm i -g @sonolus/pack
 ```
 
 `sonolus-pack` will become available to use:
@@ -45,7 +45,7 @@ sonolus-pack -h
 
 ### Resources
 
-Each resource (except `info.json`):
+Each resource (except `item.json`):
 
 -   if a file with default extension is provided, it will be processed, and corresponding `SRL` will be generated.
 -   if an extension-less file is provided, processing will be skipped, and corresponding `SRL` will be generated.
@@ -70,9 +70,20 @@ For example:
 ```json
 {
     "en": "Hello!",
-    "zh-hans": "你好！",
+    "zhs": "你好！",
     "ja": "こんにちは！",
     "ko": "안녕하세요!"
+}
+```
+
+### Tag
+
+Common type for tag.
+
+```ts
+type Tag = {
+    title: LocalizationText
+    icon?: string
 }
 ```
 
@@ -82,11 +93,25 @@ For example:
 |   info.json
 |   banner[.png/.srl]
 |
++---posts
+|   +---{post}
+|   +---...
+|   \---{post}
+|           item.json
+|           thumbnail[.png/.srl]
+|
++---playlists
+|   +---{playlist}
+|   +---...
+|   \---{playlist}
+|           item.json
+|           thumbnail[.png/.srl]
+|
 +---levels
 |   +---{level}
 |   +---...
 |   \---{level}
-|           info.json
+|           item.json
 |           cover[.png/.srl]
 |           bgm[.mp3/.srl]
 |           preview[.mp3/.srl]
@@ -96,7 +121,7 @@ For example:
 |   +---{skin}
 |   +---...
 |   \---{skin}
-|           info.json
+|           item.json
 |           thumbnail[.png/.srl]
 |           data[.json/.srl]
 |           texture[.png/.srl]
@@ -105,7 +130,7 @@ For example:
 |   +---{background}
 |   +---...
 |   \---{background}
-|           info.json
+|           item.json
 |           thumbnail[.png/.srl]
 |           data[.json/.srl]
 |           image[.png/.srl]
@@ -115,7 +140,7 @@ For example:
 |   +---{effect}
 |   +---...
 |   \---{effect}
-|           info.json
+|           item.json
 |           thumbnail[.png/.srl]
 |           data[.json/.srl]
 |           audio[.zip/.srl]
@@ -124,24 +149,32 @@ For example:
 |   +---{particle}
 |   +---...
 |   \---{particle}
-|           info.json
+|           item.json
 |           thumbnail[.png/.srl]
 |           data[.json/.srl]
 |           texture[.png/.srl]
 |
-\---engines
-    +---{engine}
++---engines
+|   +---{engine}
+|   +---...
+|   \---{engine}
+|           item.json
+|           thumbnail[.png/.srl]
+|           playData[.json/.srl]
+|           tutorialData[.json/.srl]
+|           rom[.bin/.srl]
+|           configuration[.json/.srl]
+|
+\---replays
+    +---{replay}
     +---...
-    \---{engine}
-            info.json
-            thumbnail[.png/.srl]
-            playData[.json/.srl]
-            tutorialData[.json/.srl]
-            rom[.bin/.srl]
+    \---{replay}
+            item.json
+            data[.json/.srl]
             configuration[.json/.srl]
 ```
 
-### Info
+### Server
 
 Resources of server is located in `/`.
 
@@ -157,33 +190,83 @@ type ServerInfo = {
 
 #### `banner[.png/.srl]`
 
-Server banner.
+Optional, server banner.
+
+### Posts
+
+Resources of each post is located in `/posts/{post}`.
+
+#### `item.json`
+
+Post information.
+
+```ts
+type PostItem = {
+    version: number
+    title: LocalizationText
+    time: number
+    author: LocalizationText
+    tags: Tag[]
+    description: LocalizationText
+    meta?: unknown // (optional) user-defined meta information
+}
+```
+
+#### `thumbnail[.png/.srl]`
+
+Optional, post thumbnail.
+
+### Playlists
+
+Resources of each playlist is located in `/playlists/{post}`.
+
+#### `item.json`
+
+Playlist information.
+
+```ts
+type PlaylistItem = {
+    version: number
+    title: LocalizationText
+    time: number
+    author: LocalizationText
+    tags: Tag[]
+    description: LocalizationText
+    levels: string[] // name of referenced levels
+    meta?: unknown // (optional) user-defined meta information
+}
+```
+
+#### `thumbnail[.png/.srl]`
+
+Optional, playlist thumbnail.
 
 ### Levels
 
 Resources of each level is located in `/levels/{name}`.
 
-#### `info.json`
+#### `item.json`
 
 Level information.
 
 ```ts
-type LevelInfo = {
+type LevelItem = {
     version: number
     rating: number
     engine: string // name of referenced engine
-    useSkin: Use
-    useBackground: Use
-    useEffect: Use
-    useParticle: Use
+    useSkin: UseItem
+    useBackground: UseItem
+    useEffect: UseItem
+    useParticle: UseItem
     title: LocalizationText
     artists: LocalizationText
     author: LocalizationText
+    tags: Tag[]
     description: LocalizationText
     meta?: unknown // (optional) user-defined meta information
 }
 
-type Use =
+type UseItem =
     | {
           useDefault: true
       }
@@ -213,16 +296,17 @@ Level data.
 
 Resources of each skin is located in `/skins/{skin}`.
 
-#### `info.json`
+#### `item.json`
 
 Skin information.
 
 ```ts
-type SkinInfo = {
+type SkinItem = {
     version: number
     title: LocalizationText
     subtitle: LocalizationText
     author: LocalizationText
+    tags: Tag[]
     description: LocalizationText
     meta?: unknown // (optional) user-defined meta information
 }
@@ -244,16 +328,17 @@ Skin texture.
 
 Resources of each background is located in `/backgrounds/{background}`.
 
-#### `info.json`
+#### `item.json`
 
 Background information.
 
 ```ts
-type BackgroundInfo = {
+type BackgroundItem = {
     version: number
     title: LocalizationText
     subtitle: LocalizationText
     author: LocalizationText
+    tags: Tag[]
     description: LocalizationText
     meta?: unknown // (optional) user-defined meta information
 }
@@ -279,16 +364,17 @@ Background configuration.
 
 Resources of each effect is located in `/effects/{effect}`.
 
-#### `info.json`
+#### `item.json`
 
 Effect information.
 
 ```ts
-type EffectInfo = {
+type EffectItem = {
     version: number
     title: LocalizationText
     subtitle: LocalizationText
     author: LocalizationText
+    tags: Tag[]
     description: LocalizationText
     meta?: unknown // (optional) user-defined meta information
 }
@@ -310,16 +396,17 @@ Effect audio.
 
 Resources of each particle is located in `/particles/{particle}`.
 
-#### `info.json`
+#### `item.json`
 
 Particle information.
 
 ```ts
-type ParticleInfo = {
+type ParticleItem = {
     version: number
     title: LocalizationText
     subtitle: LocalizationText
     author: LocalizationText
+    tags: Tag[]
     description: LocalizationText
     meta?: unknown // (optional) user-defined meta information
 }
@@ -341,16 +428,17 @@ Particle texture.
 
 Resources of each engine is located in `/engines/{engine}`.
 
-#### `info.json`
+#### `item.json`
 
 Engine information.
 
 ```ts
-type EngineInfo = {
+type EngineItem = {
     version: number
     title: LocalizationText
     subtitle: LocalizationText
     author: LocalizationText
+    tags: Tag[]
     description: LocalizationText
     skin: string // name of referenced skin
     background: string // name of referenced background
@@ -379,6 +467,35 @@ Optional, engine rom.
 #### `configuration[.json/.srl]`
 
 Engine configuration.
+
+### Replays
+
+Resources of each replay is located in `/replays/{replay}`.
+
+#### `item.json`
+
+Replay information.
+
+```ts
+type ReplayItem = {
+    version: number
+    title: LocalizationText
+    subtitle: LocalizationText
+    author: LocalizationText
+    tags: Tag[]
+    description: LocalizationText
+    level: string // name of referenced level
+    meta?: unknown // (optional) user-defined meta information
+}
+```
+
+#### `data[.json/.srl]`
+
+Replay data.
+
+#### `configuration[.json/.srl]`
+
+Replay configuration.
 
 ## Output
 

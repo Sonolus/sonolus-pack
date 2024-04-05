@@ -1,20 +1,23 @@
 #! /usr/bin/env node
 
+import { Database, DatabaseServerInfo } from '@sonolus/core'
 import { Command } from 'commander'
 import { emptyDirSync, outputJsonSync, removeSync } from 'fs-extra'
-import { Database } from 'sonolus-core'
-import { processInfo, processInfos } from './process'
-import { partialBackgroundInfoParser } from './schemas/background-info'
-import { partialEffectInfoParser } from './schemas/effect-info'
-import { partialEngineInfoParser } from './schemas/engine-info'
-import { partialLevelInfoParser } from './schemas/level-info'
-import { partialParticleInfoParser } from './schemas/particle-info'
-import { partialServerInfoParser } from './schemas/server-info'
-import { partialSkinInfoParser } from './schemas/skin-info'
+import { processItem, processItems } from './process'
+import { partialDatabaseBackgroundItemParser } from './schemas/background-item'
+import { partialDatabaseEffectItemParser } from './schemas/effect-item'
+import { partialDatabaseEngineItemParser } from './schemas/engine-item'
+import { partialDatabaseLevelItemParser } from './schemas/level-item'
+import { partialDatabaseParticleItemParser } from './schemas/particle-item'
+import { partialDatabasePlaylistItemParser } from './schemas/playlist-item'
+import { partialDatabasePostItemParser } from './schemas/post-item'
+import { partialDatabaseReplayItemParser } from './schemas/replay-item'
+import { partialDatabaseServerInfoParser } from './schemas/server-info'
+import { partialDatabaseSkinItemParser } from './schemas/skin-item'
 
 const options = new Command()
     .name('sonolus-pack')
-    .version('5.3.0')
+    .version('5.4.0')
     .option('-i, --input <value>', 'input directory', 'source')
     .option('-o, --output <value>', 'output directory', 'pack')
     .parse()
@@ -23,8 +26,8 @@ const options = new Command()
 const pathInput = options.input as string
 const pathOutput = options.output as string
 
-const checkExists = (infos: { name: string }[], name: string, parent: string, path: string) => {
-    if (!infos.find((info) => info.name === name))
+const checkExists = (items: { name: string }[], name: string, parent: string, path: string) => {
+    if (!items.find((item) => item.name === name))
         throw new Error(`${parent}: ${name} not found (${path})`)
 }
 
@@ -34,67 +37,111 @@ try {
 
     emptyDirSync(pathOutput)
 
-    const info = processInfo<Database['info']>(pathInput, pathOutput, partialServerInfoParser, {
-        banner: { type: 'ServerBanner', ext: 'png' },
-    })
+    const serverInfo = processItem<DatabaseServerInfo>(
+        pathInput,
+        pathOutput,
+        'info',
+        partialDatabaseServerInfoParser,
+        {
+            banner: { ext: 'png', optional: true },
+        },
+    )
 
     const db: Database = {
-        info,
+        info: serverInfo,
+        posts: [],
+        playlists: [],
         levels: [],
         skins: [],
         backgrounds: [],
         effects: [],
         particles: [],
         engines: [],
+        replays: [],
     }
 
-    processInfos(pathInput, pathOutput, 'levels', db.levels, partialLevelInfoParser, {
-        cover: { type: 'LevelCover', ext: 'png' },
-        bgm: { type: 'LevelBgm', ext: 'mp3' },
-        preview: { type: 'LevelPreview', ext: 'mp3', optional: true },
-        data: { type: 'LevelData', ext: 'json' },
+    processItems(pathInput, pathOutput, 'posts', db.posts, partialDatabasePostItemParser, {
+        thumbnail: { ext: 'png', optional: true },
     })
 
-    processInfos(pathInput, pathOutput, 'skins', db.skins, partialSkinInfoParser, {
-        thumbnail: { type: 'SkinThumbnail', ext: 'png' },
-        data: { type: 'SkinData', ext: 'json' },
-        texture: { type: 'SkinTexture', ext: 'png' },
+    processItems(
+        pathInput,
+        pathOutput,
+        'playlists',
+        db.playlists,
+        partialDatabasePlaylistItemParser,
+        {
+            thumbnail: { ext: 'png', optional: true },
+        },
+    )
+
+    processItems(pathInput, pathOutput, 'levels', db.levels, partialDatabaseLevelItemParser, {
+        cover: { ext: 'png' },
+        bgm: { ext: 'mp3' },
+        preview: { ext: 'mp3', optional: true },
+        data: { ext: 'json' },
     })
 
-    processInfos(
+    processItems(pathInput, pathOutput, 'skins', db.skins, partialDatabaseSkinItemParser, {
+        thumbnail: { ext: 'png' },
+        data: { ext: 'json' },
+        texture: { ext: 'png' },
+    })
+
+    processItems(
         pathInput,
         pathOutput,
         'backgrounds',
         db.backgrounds,
-        partialBackgroundInfoParser,
+        partialDatabaseBackgroundItemParser,
         {
-            thumbnail: { type: 'BackgroundThumbnail', ext: 'png' },
-            data: { type: 'BackgroundData', ext: 'json' },
-            image: { type: 'BackgroundImage', ext: 'png' },
-            configuration: { type: 'BackgroundConfiguration', ext: 'json' },
+            thumbnail: { ext: 'png' },
+            data: { ext: 'json' },
+            image: { ext: 'png' },
+            configuration: { ext: 'json' },
         },
     )
 
-    processInfos(pathInput, pathOutput, 'effects', db.effects, partialEffectInfoParser, {
-        thumbnail: { type: 'EffectThumbnail', ext: 'png' },
-        data: { type: 'EffectData', ext: 'json' },
-        audio: { type: 'EffectAudio', ext: 'zip' },
+    processItems(pathInput, pathOutput, 'effects', db.effects, partialDatabaseEffectItemParser, {
+        thumbnail: { ext: 'png' },
+        data: { ext: 'json' },
+        audio: { ext: 'zip' },
     })
 
-    processInfos(pathInput, pathOutput, 'particles', db.particles, partialParticleInfoParser, {
-        thumbnail: { type: 'ParticleThumbnail', ext: 'png' },
-        data: { type: 'ParticleData', ext: 'json' },
-        texture: { type: 'ParticleTexture', ext: 'png' },
+    processItems(
+        pathInput,
+        pathOutput,
+        'particles',
+        db.particles,
+        partialDatabaseParticleItemParser,
+        {
+            thumbnail: { ext: 'png' },
+            data: { ext: 'json' },
+            texture: { ext: 'png' },
+        },
+    )
+
+    processItems(pathInput, pathOutput, 'engines', db.engines, partialDatabaseEngineItemParser, {
+        thumbnail: { ext: 'png' },
+        playData: { ext: 'json' },
+        watchData: { ext: 'json' },
+        previewData: { ext: 'json' },
+        tutorialData: { ext: 'json' },
+        rom: { ext: 'bin', optional: true },
+        configuration: { ext: 'json' },
     })
 
-    processInfos(pathInput, pathOutput, 'engines', db.engines, partialEngineInfoParser, {
-        thumbnail: { type: 'EngineThumbnail', ext: 'png' },
-        playData: { type: 'EnginePlayData', ext: 'json' },
-        watchData: { type: 'EngineWatchData', ext: 'json' },
-        previewData: { type: 'EnginePreviewData', ext: 'json' },
-        tutorialData: { type: 'EngineTutorialData', ext: 'json' },
-        rom: { type: 'EngineRom', ext: 'bin', optional: true },
-        configuration: { type: 'EngineConfiguration', ext: 'json' },
+    processItems(pathInput, pathOutput, 'replays', db.replays, partialDatabaseReplayItemParser, {
+        data: { ext: 'json' },
+        configuration: { ext: 'json' },
+    })
+
+    db.playlists.forEach((playlist) => {
+        const parent = `Playlist/${playlist.name}`
+
+        playlist.levels.forEach((level, index) => {
+            checkExists(db.levels, level, parent, `.levels[${index}]`)
+        })
     })
 
     db.levels.forEach((level) => {
@@ -122,6 +169,12 @@ try {
         checkExists(db.backgrounds, engine.background, parent, '.background')
         checkExists(db.effects, engine.effect, parent, '.effect')
         checkExists(db.particles, engine.particle, parent, '.particle')
+    })
+
+    db.replays.forEach((replay) => {
+        const parent = `Replay/${replay.name}`
+
+        checkExists(db.levels, replay.level, parent, '.level')
     })
 
     outputJsonSync(`${pathOutput}/db.json`, db)

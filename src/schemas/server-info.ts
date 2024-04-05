@@ -2,8 +2,9 @@ import { z } from 'zod'
 import { localizationTextSchema } from './localization-text'
 import { getParser } from './parser'
 
-const partialServerInfoSchema = z.object({
+const partialDatabaseServerInfoSchema = z.object({
     title: localizationTextSchema,
+    description: localizationTextSchema.optional(),
 })
 
-export const partialServerInfoParser = getParser(partialServerInfoSchema)
+export const partialDatabaseServerInfoParser = getParser(partialDatabaseServerInfoSchema)
