@@ -17,7 +17,7 @@ import { partialDatabaseSkinItemParser } from './schemas/skin-item'
 
 const options = new Command()
     .name('sonolus-pack')
-    .version('5.4.0')
+    .version('5.4.1')
     .option('-i, --input <value>', 'input directory', 'source')
     .option('-o, --output <value>', 'output directory', 'pack')
     .parse()
@@ -136,15 +136,15 @@ try {
         configuration: { ext: 'json' },
     })
 
-    db.playlists.forEach((playlist) => {
+    for (const playlist of db.playlists) {
         const parent = `Playlist/${playlist.name}`
 
-        playlist.levels.forEach((level, index) => {
+        for (const [index, level] of playlist.levels.entries()) {
             checkExists(db.levels, level, parent, `.levels[${index}]`)
-        })
-    })
+        }
+    }
 
-    db.levels.forEach((level) => {
+    for (const level of db.levels) {
         const parent = `Level/${level.name}`
 
         checkExists(db.engines, level.engine, parent, '.engine')
@@ -160,22 +160,22 @@ try {
         if (!level.useParticle.useDefault) {
             checkExists(db.particles, level.useParticle.item, parent, '.useParticle.item')
         }
-    })
+    }
 
-    db.engines.forEach((engine) => {
+    for (const engine of db.engines) {
         const parent = `Engine/${engine.name}`
 
         checkExists(db.skins, engine.skin, parent, '.skin')
         checkExists(db.backgrounds, engine.background, parent, '.background')
         checkExists(db.effects, engine.effect, parent, '.effect')
         checkExists(db.particles, engine.particle, parent, '.particle')
-    })
+    }
 
-    db.replays.forEach((replay) => {
+    for (const replay of db.replays) {
         const parent = `Replay/${replay.name}`
 
         checkExists(db.levels, replay.level, parent, '.level')
-    })
+    }
 
     outputJsonSync(`${pathOutput}/db.json`, db)
 

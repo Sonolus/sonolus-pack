@@ -27,14 +27,14 @@ export const processItems = <T>(
 
     if (!existsSync(pathDir)) return
 
-    readdirSync(pathDir, { withFileTypes: true })
-        .filter((dirent) => dirent.isDirectory())
-        .forEach(({ name }) =>
-            items.push({
-                name,
-                ...processItem(`${pathDir}/${name}`, pathOutput, 'item', parser, resources),
-            } as unknown as T),
-        )
+    for (const { name } of readdirSync(pathDir, { withFileTypes: true }).filter((dirent) =>
+        dirent.isDirectory(),
+    )) {
+        items.push({
+            name,
+            ...processItem(`${pathDir}/${name}`, pathOutput, 'item', parser, resources),
+        } as never)
+    }
 }
 
 export const processItem = <T>(
@@ -54,12 +54,13 @@ export const processItem = <T>(
         `${pathInput}/${filename}.json`,
     )
 
-    const output = {}
-    Object.entries(resources as Record<string, { ext: string; optional: boolean }>).forEach(
-        ([name, { ext, optional }]) =>
-            Object.assign(output, {
-                [name]: processResource(`${pathInput}/${name}`, pathOutput, ext, optional),
-            }),
+    const output = Object.fromEntries(
+        Object.entries(resources as Record<string, { ext: string; optional: boolean }>).map(
+            ([name, { ext, optional }]) => [
+                name,
+                processResource(`${pathInput}/${name}`, pathOutput, ext, optional),
+            ],
+        ),
     )
 
     return { ...item, ...output } as T
@@ -73,8 +74,8 @@ const processResource = (pathFile: string, pathOutput: string, ext: string, opti
 
     if (existsSync(pathFileSRL)) {
         output = { srl: srlParser(readJsonSync(pathFileSRL), pathFileSRL) }
-    } else if (existsSync(`${pathFile}`)) {
-        output = { buffer: readFileSync(`${pathFile}`) }
+    } else if (existsSync(pathFile)) {
+        output = { buffer: readFileSync(pathFile) }
     } else if (existsSync(pathFileExt)) {
         if (ext === 'json') {
             const json: unknown = readJsonSync(pathFileExt)
