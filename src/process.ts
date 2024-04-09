@@ -73,8 +73,8 @@ const processResource = (pathFile: string, pathOutput: string, ext: string, opti
 
     if (existsSync(pathFileSRL)) {
         output = { srl: srlParser(readJsonSync(pathFileSRL), pathFileSRL) }
-    } else if (existsSync(`${pathFile}`)) {
-        output = { buffer: readFileSync(`${pathFile}`) }
+    } else if (existsSync(pathFile)) {
+        output = { buffer: readFileSync(pathFile) }
     } else if (existsSync(pathFileExt)) {
         if (ext === 'json') {
             const json: unknown = readJsonSync(pathFileExt)
