@@ -29,7 +29,7 @@
     "typescript-eslint": "^7.6.0"
   },
   "dependencies": {
-    "@sonolus/core": "~7.5.1",
+    "@sonolus/core": "~7.6.0",
     "commander": "^12.0.0",
     "fs-extra": "^11.2.0",
     "zod": "^3.22.4"
