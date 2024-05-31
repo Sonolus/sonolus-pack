@@ -17,7 +17,7 @@ import { partialDatabaseSkinItemParser } from './schemas/skin-item'
 
 const options = new Command()
     .name('sonolus-pack')
-    .version('5.4.1')
+    .version('5.4.2')
     .option('-i, --input <value>', 'input directory', 'source')
     .option('-o, --output <value>', 'output directory', 'pack')
     .parse()

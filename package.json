@@ -1,6 +1,6 @@
 {
   "name": "@sonolus/pack",
-  "version": "5.4.1",
+  "version": "5.4.2",
   "description": "CLI tool to pack Sonolus source files into repository and database",
   "author": "NonSpicyBurrito",
   "repository": "github:Sonolus/sonolus-pack",
@@ -29,7 +29,7 @@
     "typescript-eslint": "^7.6.0"
   },
   "dependencies": {
-    "@sonolus/core": "~7.5.1",
+    "@sonolus/core": "~7.6.0",
     "commander": "^12.0.0",
     "fs-extra": "^11.2.0",
     "zod": "^3.22.4"
