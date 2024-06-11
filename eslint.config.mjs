@@ -22,6 +22,12 @@ export default tsEslint.config(
             '@typescript-eslint/consistent-type-definitions': ['error', 'type'],
             '@typescript-eslint/switch-exhaustiveness-check': 'error',
             '@typescript-eslint/restrict-template-expressions': 'off',
+            '@typescript-eslint/no-unused-vars': [
+                'error',
+                {
+                    varsIgnorePattern: '^_',
+                },
+            ],
         },
     },
 
