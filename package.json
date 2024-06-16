@@ -30,7 +30,7 @@
   },
   "dependencies": {
     "@sinclair/typebox": "^0.32.33",
-    "@sonolus/core": "~7.6.0",
+    "@sonolus/core": "~7.7.0",
     "commander": "^12.1.0",
     "fs-extra": "^11.2.0"
   }
