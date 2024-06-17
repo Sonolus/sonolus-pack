@@ -1,9 +1,11 @@
-import { z } from 'zod'
-import { getParser } from './parser'
+import { Type } from '@sinclair/typebox'
+import { SRL } from '@sonolus/core'
+import { Expect } from '../utils/test'
+import { SchemaToMatch } from './test'
 
-const srlSchema = z.object({
-    hash: z.string(),
-    url: z.string(),
+export const srlSchema = Type.Object({
+    hash: Type.String(),
+    url: Type.String(),
 })
 
-export const srlParser = getParser(srlSchema)
+type _Tests = Expect<[SchemaToMatch<typeof srlSchema, SRL>]>
