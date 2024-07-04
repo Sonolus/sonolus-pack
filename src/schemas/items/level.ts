@@ -18,7 +18,7 @@ export const partialDatabaseLevelItemSchema = Type.Object({
     artists: localizationTextSchema,
     author: localizationTextSchema,
     tags: Type.Array(databaseTagSchema),
-    description: localizationTextSchema,
+    description: Type.Optional(localizationTextSchema),
     engine: Type.String(),
     useSkin: databaseUseItemSchema,
     useBackground: databaseUseItemSchema,

@@ -23,14 +23,14 @@
     "@types/fs-extra": "^11.0.4",
     "eslint": "^8.57.0",
     "eslint-config-prettier": "^9.1.0",
-    "prettier": "^3.3.2",
-    "prettier-plugin-organize-imports": "^3.2.4",
-    "typescript": "~5.4.5",
-    "typescript-eslint": "^7.13.0"
+    "prettier": "^3.3.3",
+    "prettier-plugin-organize-imports": "^4.0.0",
+    "typescript": "~5.5.4",
+    "typescript-eslint": "^7.17.0"
   },
   "dependencies": {
-    "@sinclair/typebox": "^0.32.33",
-    "@sonolus/core": "~7.7.0",
+    "@sinclair/typebox": "^0.32.35",
+    "@sonolus/core": "~7.8.0",
     "commander": "^12.1.0",
     "fs-extra": "^11.2.0"
   }

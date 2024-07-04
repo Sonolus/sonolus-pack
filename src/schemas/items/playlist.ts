@@ -11,7 +11,7 @@ export const partialDatabasePlaylistItemSchema = Type.Object({
     subtitle: localizationTextSchema,
     author: localizationTextSchema,
     tags: Type.Array(databaseTagSchema),
-    description: localizationTextSchema,
+    description: Type.Optional(localizationTextSchema),
     levels: Type.Array(Type.String()),
     meta: Type.Optional(Type.Unknown()),
 })

@@ -11,7 +11,7 @@ export const partialDatabasePostItemSchema = Type.Object({
     time: Type.Number(),
     author: localizationTextSchema,
     tags: Type.Array(databaseTagSchema),
-    description: localizationTextSchema,
+    description: Type.Optional(localizationTextSchema),
     meta: Type.Optional(Type.Unknown()),
 })
 

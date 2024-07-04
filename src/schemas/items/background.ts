@@ -11,7 +11,7 @@ export const partialDatabaseBackgroundItemSchema = Type.Object({
     subtitle: localizationTextSchema,
     author: localizationTextSchema,
     tags: Type.Array(databaseTagSchema),
-    description: localizationTextSchema,
+    description: Type.Optional(localizationTextSchema),
     meta: Type.Optional(Type.Unknown()),
 })
 
