@@ -1,15 +1,15 @@
 import { TSchema, TUnsafe } from '@sinclair/typebox'
-import { SRL, compressSync, hash } from '@sonolus/core'
+import { Srl, compressSync, hash } from '@sonolus/core'
 import { existsSync, outputFileSync, readFileSync, readJsonSync, readdirSync } from 'fs-extra'
 import { gzipSync } from 'zlib'
 import { srlSchema } from './schemas/srl'
-import { Remove, SRLKey } from './utils/item'
+import { Remove, SrlKey } from './utils/item'
 import { parse } from './utils/json'
 
-type SchemaOf<T> = TUnsafe<Remove<T, 'name' | SRLKey<T>>>
+type SchemaOf<T> = TUnsafe<Remove<T, 'name' | SrlKey<T>>>
 
 type ResourcesOf<T> = {
-    [K in SRLKey<T>]: T[K] extends SRL ? { ext: string } : { ext: string; optional: true }
+    [K in SrlKey<T>]: T[K] extends Srl ? { ext: string } : { ext: string; optional: true }
 }
 
 export const createProcessItems =
@@ -54,7 +54,7 @@ export const processItem = <TItem, TPartialItemSchema extends TSchema>(
 }
 
 const processResource = (pathFile: string, pathOutput: string, ext: string, optional: boolean) => {
-    let output: Buffer | SRL
+    let output: Buffer | Srl
 
     const pathFileSRL = `${pathFile}.srl`
     const pathFileExt = `${pathFile}.${ext}`
@@ -77,7 +77,7 @@ const processResource = (pathFile: string, pathOutput: string, ext: string, opti
         return
     } else {
         console.log('[WARNING]', `${pathFile}[.${ext}/.srl]: Does not exist`)
-        output = { hash: '', url: '' }
+        output = {}
     }
 
     if (output instanceof Buffer) {

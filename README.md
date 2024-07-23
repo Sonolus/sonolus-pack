@@ -207,7 +207,7 @@ type PostItem = {
     time: number
     author: LocalizationText
     tags: Tag[]
-    description: LocalizationText
+    description?: LocalizationText
     meta?: unknown // (optional) user-defined meta information
 }
 ```
@@ -231,7 +231,7 @@ type PlaylistItem = {
     time: number
     author: LocalizationText
     tags: Tag[]
-    description: LocalizationText
+    description?: LocalizationText
     levels: string[] // name of referenced levels
     meta?: unknown // (optional) user-defined meta information
 }
@@ -262,7 +262,7 @@ type LevelItem = {
     artists: LocalizationText
     author: LocalizationText
     tags: Tag[]
-    description: LocalizationText
+    description?: LocalizationText
     meta?: unknown // (optional) user-defined meta information
 }
 
@@ -307,7 +307,7 @@ type SkinItem = {
     subtitle: LocalizationText
     author: LocalizationText
     tags: Tag[]
-    description: LocalizationText
+    description?: LocalizationText
     meta?: unknown // (optional) user-defined meta information
 }
 ```
@@ -339,7 +339,7 @@ type BackgroundItem = {
     subtitle: LocalizationText
     author: LocalizationText
     tags: Tag[]
-    description: LocalizationText
+    description?: LocalizationText
     meta?: unknown // (optional) user-defined meta information
 }
 ```
@@ -375,7 +375,7 @@ type EffectItem = {
     subtitle: LocalizationText
     author: LocalizationText
     tags: Tag[]
-    description: LocalizationText
+    description?: LocalizationText
     meta?: unknown // (optional) user-defined meta information
 }
 ```
@@ -407,7 +407,7 @@ type ParticleItem = {
     subtitle: LocalizationText
     author: LocalizationText
     tags: Tag[]
-    description: LocalizationText
+    description?: LocalizationText
     meta?: unknown // (optional) user-defined meta information
 }
 ```
@@ -439,7 +439,7 @@ type EngineItem = {
     subtitle: LocalizationText
     author: LocalizationText
     tags: Tag[]
-    description: LocalizationText
+    description?: LocalizationText
     skin: string // name of referenced skin
     background: string // name of referenced background
     effect: string // name of referenced effect
@@ -483,7 +483,7 @@ type ReplayItem = {
     subtitle: LocalizationText
     author: LocalizationText
     tags: Tag[]
-    description: LocalizationText
+    description?: LocalizationText
     level: string // name of referenced level
     meta?: unknown // (optional) user-defined meta information
 }
