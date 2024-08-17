@@ -27,11 +27,11 @@ export const createProcessItems =
             })) as never
     }
 
-export const processItem = <TItem, TPartialItemSchema extends TSchema>(
+export const processItem = <TItem>(
     pathInput: string,
     pathOutput: string,
     filename: string,
-    schema: TPartialItemSchema,
+    schema: TSchema,
     resources: ResourcesOf<TItem>,
 ): TItem => {
     console.log('[INFO]', 'Packing:', pathInput)
