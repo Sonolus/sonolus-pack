@@ -1,6 +1,6 @@
 {
   "name": "@sonolus/pack",
-  "version": "5.4.4",
+  "version": "5.4.5",
   "description": "CLI tool to pack Sonolus source files into repository and database",
   "author": "NonSpicyBurrito",
   "repository": "github:Sonolus/sonolus-pack",
