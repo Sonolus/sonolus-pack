@@ -6,7 +6,7 @@ import { databaseTagSchema } from '../tag'
 import { PartialDatabaseItemSchemaToMatch } from './test'
 
 export const partialDatabaseEngineItemSchema = Type.Object({
-    version: Type.Literal(12),
+    version: Type.Literal(13),
     title: localizationTextSchema,
     subtitle: localizationTextSchema,
     author: localizationTextSchema,
