@@ -21,18 +21,17 @@
     "build": "tsc -p ."
   },
   "devDependencies": {
-    "@eslint/js": "^9.20.0",
-    "@types/eslint__js": "^8.42.3",
+    "@eslint/js": "^9.23.0",
     "@types/fs-extra": "^11.0.4",
-    "eslint": "^9.20.1",
-    "eslint-config-prettier": "^10.0.1",
-    "prettier": "^3.5.1",
+    "eslint": "^9.23.0",
+    "eslint-config-prettier": "^10.1.1",
+    "prettier": "^3.5.3",
     "prettier-plugin-organize-imports": "^4.1.0",
-    "typescript": "~5.7.3",
-    "typescript-eslint": "^8.24.1"
+    "typescript": "~5.8.2",
+    "typescript-eslint": "^8.28.0"
   },
   "dependencies": {
-    "@sinclair/typebox": "^0.34.27",
+    "@sinclair/typebox": "^0.34.31",
     "@sonolus/core": "~7.12.0",
     "commander": "^13.1.0",
     "fs-extra": "^11.3.0"
