@@ -8,6 +8,7 @@
   "keywords": [
     "Sonolus"
   ],
+  "type": "module",
   "bin": {
     "sonolus-pack": "dist/index.js"
   },
@@ -21,19 +22,19 @@
     "build": "tsc -p ."
   },
   "devDependencies": {
-    "@eslint/js": "^9.23.0",
+    "@eslint/js": "^9.31.0",
     "@types/fs-extra": "^11.0.4",
-    "eslint": "^9.23.0",
-    "eslint-config-prettier": "^10.1.1",
-    "prettier": "^3.5.3",
-    "prettier-plugin-organize-imports": "^4.1.0",
-    "typescript": "~5.8.2",
-    "typescript-eslint": "^8.28.0"
+    "eslint": "^9.31.0",
+    "eslint-config-prettier": "^10.1.8",
+    "prettier": "^3.6.2",
+    "prettier-plugin-organize-imports": "^4.2.0",
+    "typescript": "~5.8.3",
+    "typescript-eslint": "^8.38.0"
   },
   "dependencies": {
-    "@sinclair/typebox": "^0.34.31",
-    "@sonolus/core": "~7.13.0",
-    "commander": "^13.1.0",
+    "@sinclair/typebox": "^0.34.38",
+    "@sonolus/core": "~7.14.0",
+    "commander": "^14.0.0",
     "fs-extra": "^11.3.0"
   }
 }

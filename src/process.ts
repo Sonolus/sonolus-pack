@@ -1,10 +1,10 @@
 import { TSchema, TUnsafe } from '@sinclair/typebox'
 import { Srl, compressSync, hash } from '@sonolus/core'
-import { existsSync, outputFileSync, readFileSync, readJsonSync, readdirSync } from 'fs-extra'
-import { gzipSync } from 'zlib'
-import { srlSchema } from './schemas/srl'
-import { Remove, SrlKey } from './utils/item'
-import { parse } from './utils/json'
+import fs from 'fs-extra'
+import { gzipSync } from 'node:zlib'
+import { srlSchema } from './schemas/srl.js'
+import { Remove, SrlKey } from './utils/item.js'
+import { parse } from './utils/json.js'
 
 type SchemaOf<T> = TUnsafe<Remove<T, 'name' | SrlKey<T>>>
 
@@ -17,9 +17,10 @@ export const createProcessItems =
     <T>(dirname: string, schema: SchemaOf<T>, resources: ResourcesOf<T>): T[] => {
         const pathDir = `${pathInput}/${dirname}`
 
-        if (!existsSync(pathDir)) return []
+        if (!fs.existsSync(pathDir)) return []
 
-        return readdirSync(pathDir, { withFileTypes: true })
+        return fs
+            .readdirSync(pathDir, { withFileTypes: true })
             .filter((dirent) => dirent.isDirectory())
             .map(({ name }) => ({
                 name,
@@ -36,7 +37,7 @@ export const processItem = <TItem>(
 ): TItem => {
     console.log('[INFO]', 'Packing:', pathInput)
 
-    if (!existsSync(`${pathInput}/${filename}.json`))
+    if (!fs.existsSync(`${pathInput}/${filename}.json`))
         throw new Error(`${pathInput}/${filename}.json: Does not exist`)
 
     const item = parse(`${pathInput}/${filename}.json`, schema)
@@ -59,18 +60,18 @@ const processResource = (pathFile: string, pathOutput: string, ext: string, opti
     const pathFileSRL = `${pathFile}.srl`
     const pathFileExt = `${pathFile}.${ext}`
 
-    if (existsSync(pathFileSRL)) {
+    if (fs.existsSync(pathFileSRL)) {
         output = parse(pathFileSRL, srlSchema)
-    } else if (existsSync(pathFile)) {
-        output = readFileSync(pathFile)
-    } else if (existsSync(pathFileExt)) {
+    } else if (fs.existsSync(pathFile)) {
+        output = fs.readFileSync(pathFile)
+    } else if (fs.existsSync(pathFileExt)) {
         if (ext === 'json') {
-            const json: unknown = readJsonSync(pathFileExt)
+            const json: unknown = fs.readJsonSync(pathFileExt)
             output = compressSync(json)
         } else if (ext === 'bin') {
-            output = gzipSync(readFileSync(pathFileExt), { level: 9 })
+            output = gzipSync(fs.readFileSync(pathFileExt), { level: 9 })
         } else {
-            output = readFileSync(pathFileExt)
+            output = fs.readFileSync(pathFileExt)
         }
     } else if (optional) {
         console.log('[INFO]', `${pathFile}[.${ext}/.srl]: Does not exist, skipped`)
@@ -82,7 +83,7 @@ const processResource = (pathFile: string, pathOutput: string, ext: string, opti
 
     if (output instanceof Buffer) {
         const outputHash = hash(output)
-        outputFileSync(`${pathOutput}/repository/${outputHash}`, output)
+        fs.outputFileSync(`${pathOutput}/repository/${outputHash}`, output)
         output = { hash: outputHash, url: `/sonolus/repository/${outputHash}` }
     }
 

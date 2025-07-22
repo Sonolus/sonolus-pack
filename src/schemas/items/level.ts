@@ -1,10 +1,10 @@
 import { Type } from '@sinclair/typebox'
 import { DatabaseLevelItem, DatabaseUseItem } from '@sonolus/core'
-import { Expect } from '../../utils/test'
-import { localizationTextSchema } from '../localizationText'
-import { databaseTagSchema } from '../tag'
-import { SchemaToMatch } from '../test'
-import { PartialDatabaseItemSchemaToMatch } from './test'
+import { Expect } from '../../utils/test.js'
+import { localizationTextSchema } from '../localizationText.js'
+import { databaseTagSchema } from '../tag.js'
+import { SchemaToMatch } from '../test.js'
+import { PartialDatabaseItemSchemaToMatch } from './test.js'
 
 const databaseUseItemSchema = Type.Union([
     Type.Object({ useDefault: Type.Literal(true) }),
