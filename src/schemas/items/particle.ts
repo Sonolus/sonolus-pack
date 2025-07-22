@@ -1,9 +1,9 @@
 import { Type } from '@sinclair/typebox'
 import { DatabaseParticleItem } from '@sonolus/core'
-import { Expect } from '../../utils/test'
-import { localizationTextSchema } from '../localizationText'
-import { databaseTagSchema } from '../tag'
-import { PartialDatabaseItemSchemaToMatch } from './test'
+import { Expect } from '../../utils/test.js'
+import { localizationTextSchema } from '../localizationText.js'
+import { databaseTagSchema } from '../tag.js'
+import { PartialDatabaseItemSchemaToMatch } from './test.js'
 
 export const partialDatabaseParticleItemSchema = Type.Object({
     version: Type.Literal(3),

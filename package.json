@@ -8,6 +8,7 @@
   "keywords": [
     "Sonolus"
   ],
+  "type": "module",
   "bin": {
     "sonolus-pack": "dist/index.js"
   },

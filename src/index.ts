@@ -2,18 +2,18 @@
 
 import { Database } from '@sonolus/core'
 import { Command } from 'commander'
-import { emptyDirSync, outputJsonSync, removeSync } from 'fs-extra'
-import { createProcessItems, processItem } from './process'
-import { partialDatabaseBackgroundItemSchema } from './schemas/items/background'
-import { partialDatabaseEffectItemSchema } from './schemas/items/effect'
-import { partialDatabaseEngineItemSchema } from './schemas/items/engine'
-import { partialDatabaseLevelItemSchema } from './schemas/items/level'
-import { partialDatabaseParticleItemSchema } from './schemas/items/particle'
-import { partialDatabasePlaylistItemSchema } from './schemas/items/playlist'
-import { partialDatabasePostItemSchema } from './schemas/items/post'
-import { partialDatabaseReplayItemSchema } from './schemas/items/replay'
-import { partialDatabaseSkinItemSchema } from './schemas/items/skin'
-import { partialDatabaseServerInfoSchema } from './schemas/serverInfo'
+import fs from 'fs-extra'
+import { createProcessItems, processItem } from './process.js'
+import { partialDatabaseBackgroundItemSchema } from './schemas/items/background.js'
+import { partialDatabaseEffectItemSchema } from './schemas/items/effect.js'
+import { partialDatabaseEngineItemSchema } from './schemas/items/engine.js'
+import { partialDatabaseLevelItemSchema } from './schemas/items/level.js'
+import { partialDatabaseParticleItemSchema } from './schemas/items/particle.js'
+import { partialDatabasePlaylistItemSchema } from './schemas/items/playlist.js'
+import { partialDatabasePostItemSchema } from './schemas/items/post.js'
+import { partialDatabaseReplayItemSchema } from './schemas/items/replay.js'
+import { partialDatabaseSkinItemSchema } from './schemas/items/skin.js'
+import { partialDatabaseServerInfoSchema } from './schemas/serverInfo.js'
 
 const options = new Command()
     .name('sonolus-pack')
@@ -35,7 +35,7 @@ try {
     console.log('[INFO]', 'Packing:', pathInput)
     console.log()
 
-    emptyDirSync(pathOutput)
+    fs.emptyDirSync(pathOutput)
 
     const processItems = createProcessItems(pathInput, pathOutput)
 
@@ -141,7 +141,7 @@ try {
         checkExists(db.levels, replay.level, parent, '/level')
     }
 
-    outputJsonSync(`${pathOutput}/db.json`, db)
+    fs.outputJsonSync(`${pathOutput}/db.json`, db)
 
     console.log()
     console.log('[SUCCESS]', 'Packed to:', pathOutput)
@@ -149,5 +149,5 @@ try {
     console.log()
     console.error('[FAILED]', error)
 
-    removeSync(pathOutput)
+    fs.removeSync(pathOutput)
 }

@@ -1,9 +1,9 @@
 import { TSchema } from '@sinclair/typebox'
 import { Value } from '@sinclair/typebox/value'
-import { readJsonSync } from 'fs-extra'
+import fs from 'fs-extra'
 
 export const parse = <T extends TSchema>(path: string, schema: T) => {
-    const data: unknown = readJsonSync(path)
+    const data: unknown = fs.readJsonSync(path)
 
     if (!Value.Check(schema, data)) {
         for (const error of Value.Errors(schema, data)) {
