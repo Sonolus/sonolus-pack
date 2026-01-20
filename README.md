@@ -82,7 +82,7 @@ Common type for tag.
 
 ```ts
 type Tag = {
-    title: LocalizationText
+    title?: LocalizationText
     icon?: string
 }
 ```
