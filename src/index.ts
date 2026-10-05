@@ -3,6 +3,7 @@
 import { Database } from '@sonolus/core'
 import { Command } from 'commander'
 import fs from 'fs-extra'
+
 import { createProcessItems, processItem } from './process.js'
 import { partialDatabaseBackgroundItemSchema } from './schemas/items/background.js'
 import { partialDatabaseEffectItemSchema } from './schemas/items/effect.js'

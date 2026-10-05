@@ -4,10 +4,10 @@ CLI tool to pack Sonolus source files into repository and database.
 
 ## Links
 
--   [Sonolus Website](https://sonolus.com)
--   [Sonolus Wiki](https://wiki.sonolus.com)
--   [sonolus-express](https://github.com/Sonolus/sonolus-express)
--   [sonolus-generate-static](https://github.com/Sonolus/sonolus-generate-static)
+- [Sonolus Website](https://sonolus.com)
+- [Sonolus Wiki](https://wiki.sonolus.com)
+- [sonolus-express](https://github.com/Sonolus/sonolus-express)
+- [sonolus-generate-static](https://github.com/Sonolus/sonolus-generate-static)
 
 ## Usage
 
@@ -47,15 +47,15 @@ sonolus-pack -h
 
 Each resource (except `item.json`):
 
--   if a file with default extension is provided, it will be processed, and corresponding `SRL` will be generated.
--   if an extension-less file is provided, processing will be skipped, and corresponding `SRL` will be generated.
--   if an `.srl` extension file is provided, its content will be used as `SRL`.
+- if a file with default extension is provided, it will be processed, and corresponding `SRL` will be generated.
+- if an extension-less file is provided, processing will be skipped, and corresponding `SRL` will be generated.
+- if an `.srl` extension file is provided, its content will be used as `SRL`.
 
 For example resource `cover[.png/.srl]`:
 
--   if file `cover.png` is provided, it will be processed, and corresponding `SRL` will be generated.
--   if file `cover` is provided, processing will be skipped, and corresponding `SRL` will be generated.
--   if file `cover.srl` is provided, its content will be used as `SRL`.
+- if file `cover.png` is provided, it will be processed, and corresponding `SRL` will be generated.
+- if file `cover` is provided, processing will be skipped, and corresponding `SRL` will be generated.
+- if file `cover.srl` is provided, its content will be used as `SRL`.
 
 ### Localization Text
 
@@ -501,7 +501,7 @@ Replay configuration.
 
 Output contains:
 
--   `/repository` contains processed resources.
--   `/db.json` contains information of items.
+- `/repository` contains processed resources.
+- `/db.json` contains information of items.
 
 Output can be used by [sonolus-express](https://github.com/Sonolus/sonolus-express) and [sonolus-generate-static](https://github.com/Sonolus/sonolus-generate-static) to develop Sonolus servers.

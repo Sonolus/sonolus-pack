@@ -1,4 +1,5 @@
-import { TSchema } from '@sinclair/typebox'
+import { TSchema } from 'typebox'
+
 import { Remove, SrlKey } from '../../utils/item.js'
 import { PartialDatabaseSchemaToMatch } from '../test.js'
 

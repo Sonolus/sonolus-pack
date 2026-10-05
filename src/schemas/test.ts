@@ -1,4 +1,5 @@
-import { Static, TSchema } from '@sinclair/typebox'
+import { Static, TSchema } from 'typebox'
+
 import { Remove, SrlKey } from '../utils/item.js'
 import { MutuallyAssignable } from '../utils/test.js'
 

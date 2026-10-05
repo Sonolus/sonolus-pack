@@ -1,5 +1,6 @@
-import { Type } from '@sinclair/typebox'
 import { DatabaseServerInfo } from '@sonolus/core'
+import Type from 'typebox'
+
 import { Expect } from '../utils/test.js'
 import { localizationTextSchema } from './localizationText.js'
 import { PartialDatabaseSchemaToMatch } from './test.js'
