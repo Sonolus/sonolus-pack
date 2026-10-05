@@ -62,7 +62,7 @@ For example resource `cover[.png/.srl]`:
 Common type for text with localization.
 
 ```ts
-type LocalizationText = Record<string, string>
+type LocalizationText = Record<string, string> | string
 ```
 
 For example:
@@ -75,6 +75,8 @@ For example:
     "ko": "안녕하세요!"
 }
 ```
+
+You can also simply use a string shorthand.
 
 ### Tag
 

@@ -13,5 +13,5 @@ export const parse = <T extends TSchema>(path: string, schema: T) => {
     }
 
     Value.Clean(schema, data)
-    return data
+    return Value.Decode(schema, data)
 }
