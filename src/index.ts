@@ -18,7 +18,7 @@ import { partialDatabaseServerInfoSchema } from './schemas/serverInfo.js'
 
 const options = new Command()
     .name('sonolus-pack')
-    .version('5.5.1')
+    .version('5.5.2')
     .option('-i, --input <value>', 'input directory', 'source')
     .option('-o, --output <value>', 'output directory', 'pack')
     .parse()
